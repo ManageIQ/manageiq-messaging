@@ -21,21 +21,22 @@ module ManageIQ
         client.subscribe(queue_name, headers) do |msg|
           begin
             msg_options = decode_body(msg.headers, msg.body)
-            puts("Processing background job: queue(#{queue_name}), job(#{msg_options.inspect}), headers(#{msg.headers})")
+            logger.info("Processing background job: queue(#{queue_name}), job(#{msg_options.inspect}), headers(#{msg.headers})")
             run_job(msg_options)
             run_job(msg_options[:miq_callback]) if msg_options[:miq_callback]
+            logger.info("Background job completed")
           rescue Timeout::Error
-            puts("Message timed out")
+            logger.warn("Background job timed out")
             if Object.const_defined?('ActiveRecord::Base')
               begin
-                puts("Reconnecting to DB after timeout error during queue deliver")
+                logger.info("Reconnecting to DB after timeout error during queue deliver")
                 ActiveRecord::Base.connection.reconnect!
               rescue => err
-                puts("Error encountered during <ActiveRecord::Base.connection.reconnect!> error:#{err.class.name}: #{err.message}")
+                logger.error("Error encountered during <ActiveRecord::Base.connection.reconnect!> error:#{err.class.name}: #{err.message}")
               end
             end
           rescue => err
-            puts("Error delivering #{msg_options.inspect}, reason: #{err}, backtrace: #{err.backtrace}")
+            logger.info("Error delivering #{msg_options.inspect}, reason: #{err}, backtrace: #{err.backtrace}")
           end
 
           client.ack(msg)

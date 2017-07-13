@@ -25,10 +25,11 @@ module ManageIQ
             sender = msg.headers['sender']
             message_type = msg.headers['message_type']
             message_body = decode_body(msg.headers, msg.body)
+            logger.info("Message received: queue(#{queue_name}), msg(#{message_body}), headers(#{msg.headers})")
             yield sender, message_type, message_body
-            puts("Message processed: queue(#{queue_name}), msg(#{message_body}), headers(#{msg.headers})")
+            logger.info("Message processed")
           rescue => err
-            puts("Error delivering #{msg.inspect}, reason: #{err}")
+            logger.error("Error delivering #{msg.inspect}, reason: #{err}")
           end
 
           client.ack(msg)

@@ -5,7 +5,7 @@ require 'manageiq/messaging/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "manageiq-messaging"
-  spec.version       = Manageiq::Messaging::VERSION
+  spec.version       = ManageIQ::Messaging::VERSION
   spec.authors       = ["Bill Wei"]
   spec.email         = ["bilwei@redhat.com"]
 

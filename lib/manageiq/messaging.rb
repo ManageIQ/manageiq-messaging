@@ -2,9 +2,19 @@ require 'active_support/core_ext/module/delegation'
 require 'yaml'
 require 'stomp'
 
+require 'manageiq/messaging/null_logger'
+
 module ManageIQ
   module Messaging
-    # Your code goes here...
+    class << self
+      attr_writer :logger
+    end
+
+    def self.logger
+      @logger ||= defined?(ManageIQ._log) && ManageIQ._log
+      @logger ||= defined?($log) && $log
+      @logger ||= NullLogger.new
+    end
   end
 end
 

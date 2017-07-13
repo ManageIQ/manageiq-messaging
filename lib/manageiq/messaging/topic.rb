@@ -25,10 +25,11 @@ module ManageIQ
             sender = event.headers['sender']
             event_type = event.headers['event_type']
             event_body = decode_body(event.headers, event.body)
+            $log.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})") if $log
             yield sender, event_type, event_body
-            puts("Event processed: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
+            $log.info("Event processed") if $log
           rescue => err
-            puts("Error delivering #{event.inspect}, reason: #{err}")
+            $log.error("Error delivering #{event.inspect}, reason: #{err}") if $log
           end
 
           client.ack(event)
