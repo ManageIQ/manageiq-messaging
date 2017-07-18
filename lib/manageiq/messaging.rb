@@ -11,8 +11,6 @@ module ManageIQ
     end
 
     def self.logger
-      @logger ||= defined?(ManageIQ._log) && ManageIQ._log
-      @logger ||= defined?($log) && $log
       @logger ||= NullLogger.new
     end
   end
