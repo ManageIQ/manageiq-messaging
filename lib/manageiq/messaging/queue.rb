@@ -3,7 +3,7 @@ module ManageIQ
     class Queue
       include Common
 
-      def self.publish(client = nil, options)
+      def self.publish(client, options)
         assert_options(options, [:message, :service])
 
         options = options.dup
@@ -28,11 +28,9 @@ module ManageIQ
             logger.info("Message received: queue(#{queue_name}), msg(#{message_body}), headers(#{msg.headers})")
             yield sender, message_type, message_body
             logger.info("Message processed")
-          rescue => err
-            logger.error("Error delivering #{msg.inspect}, reason: #{err}")
+          ensure
+            client.ack(msg)
           end
-
-          client.ack(msg)
         end
       end
     end

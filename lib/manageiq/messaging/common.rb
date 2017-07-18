@@ -13,17 +13,8 @@ module ManageIQ
         end
 
         def raw_publish(client, address, payload, headers)
-          unless client
-            client = Client.new
-            close_on_exit = true
-          end
-
-          begin
-            client.publish(address, encode_body(headers, payload), headers)
-            logger.info("Address(#{address}), msg(#{payload.inspect}), headers(#{headers.inspect})")
-          ensure
-            client.close if close_on_exit
-          end
+          client.publish(address, encode_body(headers, payload), headers)
+          logger.info("Address(#{address}), msg(#{payload.inspect}), headers(#{headers.inspect})")
         end
 
         def queue_for_publish(options)

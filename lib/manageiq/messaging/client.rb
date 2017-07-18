@@ -1,22 +1,36 @@
 module ManageIQ
   module Messaging
     class Client
-      delegate :subscribe, :to => :stomp_client
-      delegate :publish,   :to => :stomp_client
-      delegate :close,     :to => :stomp_client
-      delegate :ack,       :to => :stomp_client
+      def self.open(options)
+        StompClient.new(options)
+      end
 
-      private
-      attr_reader :stomp_client
+      def publish_background_job(options)
+        BackgroundJob.push(self, options)
+      end
 
-      def initialize(long_live = false, options = {})
-        # TODO: need to be able to configure host
-        hosts = [{:login => "admin", :passcode => "smartvm", :host => "127.0.0.1", :port => 61613}]
-        headers = {}
-        headers.merge!(:host => "127.0.0.1", :"accept-version" => "1.2", :"heart-beat" => "2000,0") if long_live
-        headers.merge!(:"client-id" => options[:client_id]) if options[:client_id]
+      def subscribe_background_job(options)
+        BackgroundJob.subscribe(self, options)
+      end
 
-        @stomp_client = Stomp::Client.new(:hosts => hosts, :connect_headers => headers)
+      def publish_queue(options)
+        Queue.publish(self, options)
+      end
+
+      def subscribe_queue(options, &block)
+        raise "A block is required" unless block_given?
+
+        Queue.subscribe(self, options, &block)
+      end
+
+      def publish_topic(options)
+        Topic.publish(self, options)
+      end
+
+      def subscribe_topic(options, &block)
+        raise "A block is required" unless block_given?
+
+        Topic.subscribe(self, options, &block)
       end
     end
   end

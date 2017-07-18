@@ -3,7 +3,7 @@ module ManageIQ
     class BackgroundJob
       include Common
 
-      def self.publish(client = nil, options)
+      def self.publish(client, options)
         assert_options(options, [:class_name, :method_name, :service])
 
         options = options.dup
@@ -35,11 +35,9 @@ module ManageIQ
                 logger.error("Error encountered during <ActiveRecord::Base.connection.reconnect!> error:#{err.class.name}: #{err.message}")
               end
             end
-          rescue => err
-            logger.info("Error delivering #{msg_options.inspect}, reason: #{err}, backtrace: #{err.backtrace}")
+          ensure
+            client.ack(msg)
           end
-
-          client.ack(msg)
         end
       end
 

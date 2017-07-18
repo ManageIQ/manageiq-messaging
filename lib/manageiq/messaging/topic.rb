@@ -3,7 +3,7 @@ module ManageIQ
     class Topic
       include Common
 
-      def self.publish(client = nil, options)
+      def self.publish(client, options)
         assert_options(options, [:event, :service])
 
         options = options.dup
@@ -29,10 +29,8 @@ module ManageIQ
             yield sender, event_type, event_body
             $log.info("Event processed") if $log
           rescue => err
-            $log.error("Error delivering #{event.inspect}, reason: #{err}") if $log
+            client.ack(event)
           end
-
-          client.ack(event)
         end
       end
     end
