@@ -10,20 +10,21 @@ module ManageIQ
       attr_reader :stomp_client
 
       # options
-      #   :hosts (array of)
-      #     :host
-      #     :login
-      #     :passcode
-      #     :port
+      #   :host
+      #   :username
+      #   :password
+      #   :port
       #   :client_id (optional)
-      #   :heartbeat  (default to true)
+      #   :heartbeat (optional, default to true)
       def initialize(options)
-        hosts = options[:hosts]
+        host = {:host => options[:host], :port => options[:port]}
+        host[:passcode] = options[:password] if options[:password]
+        host[:login] = options[:username] if options[:username]
         headers = {}
-        headers.merge!(:host => hosts[0][:host], :"accept-version" => "1.2", :"heart-beat" => "2000,0") if options[:heartbeat]
+        headers.merge!(:host => options[:host], :"accept-version" => "1.2", :"heart-beat" => "2000,0") unless options[:heartbeat] == false
         headers.merge!(:"client-id" => options[:client_id]) if options[:client_id]
 
-        @stomp_client = Stomp::Client.new(:hosts => hosts, :connect_headers => headers)
+        @stomp_client = Stomp::Client.new(:hosts => [host], :connect_headers => headers)
       end
     end
   end

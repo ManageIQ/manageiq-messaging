@@ -3,27 +3,20 @@ module ManageIQ
     class BackgroundJob
       include Common
 
-      def self.publish(client, options)
-        assert_options(options, [:class_name, :method_name, :service])
-
-        options = options.dup
-        address, headers = queue_for_publish(options)
-
-        raw_publish(client, address, options, headers)
-      end
-
       def self.subscribe(client, options)
         assert_options(options, [:service])
 
-        options = options.dup
         queue_name, headers = queue_for_subscribe(options)
 
         client.subscribe(queue_name, headers) do |msg|
+          client.ack(msg)
           begin
+            assert_options(msg.headers, ['class_name', 'message_type'])
+
             msg_options = decode_body(msg.headers, msg.body)
+            msg_options = {} if msg_options.empty?
             logger.info("Processing background job: queue(#{queue_name}), job(#{msg_options.inspect}), headers(#{msg.headers})")
-            run_job(msg_options)
-            run_job(msg_options[:miq_callback]) if msg_options[:miq_callback]
+            run_job(msg_options.merge(:class_name => msg.headers['class_name'], :method_name => msg.headers['message_type']))
             logger.info("Background job completed")
           rescue Timeout::Error
             logger.warn("Background job timed out")
@@ -35,22 +28,26 @@ module ManageIQ
                 logger.error("Error encountered during <ActiveRecord::Base.connection.reconnect!> error:#{err.class.name}: #{err.message}")
               end
             end
-          ensure
-            client.ack(msg)
           end
         end
       end
 
       def self.run_job(options)
         assert_options(options, [:class_name, :method_name])
-        obj = Object.const_get(options[:class_name])
-        obj = obj.find(options[:instance_id]) if options[:instance_id]
 
-        msg_timeout = options[:msg_timeout].to_i
-        msg_timeout = 600 if msg_timeout.zero?
+        instance_id = options[:instance_id]
+        args = options[:args]
+        miq_callback = options[:miq_callback]
+
+        obj = Object.const_get(options[:class_name])
+        obj = obj.find(instance_id) if instance_id
+
+        msg_timeout = 600 # TODO: configurable per message
         Timeout.timeout(msg_timeout) do
-          result = obj.send(options[:method_name], *options[:args])
+          obj.send(options[:method_name], *args)
         end
+
+        run_job(miq_callback) if miq_callback
       end
       private_class_method :run_job
     end
