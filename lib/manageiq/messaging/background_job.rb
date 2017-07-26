@@ -19,8 +19,8 @@ module ManageIQ
             result = run_job(msg_options.merge(:class_name => msg.headers['class_name'], :method_name => msg.headers['message_type']))
             logger.info("Background job completed")
 
-            correlation_id = msg.headers['correlation_id']
-            send_response(client, options[:service], correlation_id, result) if correlation_id
+            correlation_ref = msg.headers['correlation_id']
+            send_response(client, options[:service], correlation_ref, result) if correlation_ref
           rescue Timeout::Error
             logger.warn("Background job timed out")
             if Object.const_defined?('ActiveRecord::Base')

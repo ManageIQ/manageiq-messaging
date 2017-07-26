@@ -23,7 +23,7 @@ module ManageIQ
         messages.each { |options| publish(client, options) }
       end
 
-      Struct.new("Message", :sender, :message, :payload, :ack_id)
+      Struct.new("Message", :sender, :message, :payload, :ack_ref)
 
       def self.subscribe(client, options)
         assert_options(options, [:service])
@@ -40,8 +40,8 @@ module ManageIQ
           result = yield [Struct::Message.new(sender, message_type, message_body, msg)]
           logger.info("Message processed")
 
-          correlation_id = msg.headers['correlation_id']
-          send_response(client, options[:service], correlation_id, result) if correlation_id
+          correlation_ref = msg.headers['correlation_id']
+          send_response(client, options[:service], correlation_ref, result) if correlation_ref
         end
       end
     end
