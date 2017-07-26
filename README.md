@@ -34,7 +34,7 @@ Or install it yourself as:
   
   client.close
 ```
-Altenatively your code can live in a block for the `.open` method without the need to explictly close the client
+Alternatively your code can live in a block for the `.open` method without the need to explictly close the client
 ```
   ManageIQ::Messaging::Client.open(
     :host      => 'localhost', 
