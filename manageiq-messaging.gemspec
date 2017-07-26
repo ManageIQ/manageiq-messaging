@@ -33,6 +33,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'stomp', '>= 1.4.4'
   spec.add_dependency 'activesupport', '>= 4.2.2'
 
+  spec.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
+  spec.add_development_dependency "simplecov"
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
