@@ -12,26 +12,26 @@ module ManageIQ
           ManageIQ::Messaging.logger
         end
 
-        def raw_publish(client, address, payload, headers)
-          client.publish(address, encode_body(headers, payload), headers)
-          logger.info("Address(#{address}), msg(#{payload.inspect}), headers(#{headers.inspect})")
+        def raw_publish(client, address, body, headers)
+          client.publish(address, encode_body(headers, body), headers)
+          logger.info("Address(#{address}), msg(#{body.inspect}), headers(#{headers.inspect})")
         end
 
         def queue_for_publish(options)
-          affinity = options.delete(:affinity) || 'none'
-          address = "queue/#{options.delete(:service)}.#{affinity}"
+          affinity = options[:affinity] || 'none'
+          address = "queue/#{options[:service]}.#{affinity}"
 
           headers = {:"destination-type" => "ANYCAST"}
-          headers[:expires] = options.delete(:expires_on).to_i * 1000 if options[:expires_on]
-          headers[:AMQ_SCHEDULED_TIME] = options.delete(:deliver_on).to_i * 1000 if options[:deliver_on]
-          headers[:priority] = options.delete(:priority) if options[:priority]
+          headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
+          headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
+          headers[:priority] = options[:priority] if options[:priority]
 
           [address, headers]
         end
 
         def queue_for_subscribe(options)
-          affinity = options.delete(:affinity) || 'none'
-          queue_name = "queue/#{options.delete(:service)}.#{affinity}"
+          affinity = options[:affinity] || 'none'
+          queue_name = "queue/#{options[:service]}.#{affinity}"
 
           headers = {:"subscription-type" => 'ANYCAST', :ack => 'client'}
 
@@ -39,37 +39,35 @@ module ManageIQ
         end
 
         def topic_for_publish(options)
-          options.delete(:resource)
-          address = "topic/#{options.delete(:service)}"
+          address = "topic/#{options[:service]}"
 
           headers = {:"destination-type" => "MULTICAST"}
-          headers[:expires] = options.delete(:expires_on).to_i * 1000 if options[:expires_on]
-          headers[:AMQ_SCHEDULED_TIME] = options.delete(:deliver_on).to_i * 1000 if options[:deliver_on]
-          headers[:priority] = options.delete(:priority) if options[:priority]
+          headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
+          headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
+          headers[:priority] = options[:priority] if options[:priority]
 
           [address, headers]
         end
 
         def topic_for_subscribe(options)
-          options.delete(:resource)
-          queue_name = "topic/#{options.delete(:service)}"
+          queue_name = "topic/#{options[:service]}"
 
           headers = {:"subscription-type" => 'MULTICAST', :ack => 'client'}
-          headers[:"durable-subscription-name"] = options.delete(:persist_id) if options[:persist_id]
+          headers[:"durable-subscription-name"] = options[:persist_id] if options[:persist_id]
 
           [queue_name, headers]
         end
 
         def assert_options(options, keys)
           keys.each do |key|
-            raise "options must contains key #{key}" if options[key].nil?
+            raise "options must contains key #{key}" unless options.key?(key)
           end
         end
 
-        def encode_body(headers, payload)
-          return payload if payload.kind_of?(String)
+        def encode_body(headers, body)
+          return body if body.kind_of?(String)
           headers[:encoding] = 'yaml'
-          payload.to_yaml
+          body.to_yaml
         end
 
         def decode_body(headers, raw_body)

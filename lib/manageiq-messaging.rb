@@ -1,2 +1,1 @@
 require 'manageiq/messaging'
-

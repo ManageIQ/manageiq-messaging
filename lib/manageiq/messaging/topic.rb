@@ -6,12 +6,11 @@ module ManageIQ
       def self.publish(client, options)
         assert_options(options, [:event, :service])
 
-        options = options.dup
         address, headers = topic_for_publish(options)
-        headers[:sender] = options.delete(:sender) if options[:sender]
-        headers[:message_type] = options.delete(:event_type) if options[:event_type]
+        headers[:sender] = options[:sender] if options[:sender]
+        headers[:event_type] = options[:event] if options[:event]
 
-        raw_publish(client, address, options[:event], headers)
+        raw_publish(client, address, options[:payload], headers)
       end
 
       def self.subscribe(client, options)
@@ -21,15 +20,14 @@ module ManageIQ
         queue_name, headers = topic_for_subscribe(options)
 
         client.subscribe(queue_name, headers) do |event|
+          client.ack(event)
           begin
             sender = event.headers['sender']
             event_type = event.headers['event_type']
             event_body = decode_body(event.headers, event.body)
-            $log.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})") if $log
+            logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
             yield sender, event_type, event_body
-            $log.info("Event processed") if $log
-          rescue => err
-            client.ack(event)
+            logger.info("Event processed")
           end
         end
       end
