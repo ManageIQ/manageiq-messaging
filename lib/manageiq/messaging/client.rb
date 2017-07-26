@@ -32,8 +32,10 @@ module ManageIQ
       #   :sender_id (optional, identity of the publisher)
       #   <other queue options TBA>
       #
-      def publish_message(options)
-        Queue.publish(self, options)
+      # Optionally a call back block {|response| block} can be provided to wait on
+      # the consumer to send an acknowledgment.
+      def publish_message(options, &block)
+        Queue.publish(self, options, &block)
       end
 
       # Publish multiple messages to a queue.
@@ -124,3 +126,4 @@ module ManageIQ
     end
   end
 end
+

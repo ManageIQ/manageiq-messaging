@@ -3,15 +3,20 @@ module ManageIQ
     class Queue
       include Common
 
-      def self.publish(client, options)
+      def self.publish(client, options, &block)
         assert_options(options, [:message, :service])
 
         address, headers = queue_for_publish(options)
         headers[:sender] = options[:sender] if options[:sender]
         headers[:message_type] = options[:message] if options[:message]
         headers[:class_name] = options[:class_name] if options[:class_name]
+        headers[:correlation_id] = Time.now.to_i.to_s if block_given?
 
         raw_publish(client, address, options[:payload] || '', headers)
+
+        return unless block_given?
+
+        receive_response(client, options[:service], headers[:correlation_id], &block)
       end
 
       def self.publish_batch(client, messages)
@@ -32,8 +37,11 @@ module ManageIQ
           message_body = decode_body(msg.headers, msg.body)
           logger.info("Message received: queue(#{queue_name}), msg(#{message_body}), headers(#{msg.headers})")
 
-          yield [Struct::Message.new(sender, message_type, message_body, msg)]
+          result = yield [Struct::Message.new(sender, message_type, message_body, msg)]
           logger.info("Message processed")
+
+          correlation_id = msg.headers['correlation_id']
+          send_response(client, options[:service], correlation_id, result) if correlation_id
         end
       end
     end
