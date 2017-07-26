@@ -1,8 +1,6 @@
 # Manageiq::Messaging
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/manageiq/messaging`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+ManageIQ library for ManageIQ compoments to exchange messages through its internal messaging bus.
 
 ## Installation
 
