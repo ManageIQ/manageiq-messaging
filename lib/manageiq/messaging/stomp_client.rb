@@ -1,10 +1,11 @@
 module ManageIQ
   module Messaging
     class StompClient < Client
-      delegate :subscribe, :to => :stomp_client
-      delegate :publish,   :to => :stomp_client
-      delegate :close,     :to => :stomp_client
-      delegate :ack,       :to => :stomp_client
+      delegate :subscribe,   :to => :stomp_client
+      delegate :unsubscribe, :to => :stomp_client
+      delegate :publish,     :to => :stomp_client
+      delegate :close,       :to => :stomp_client
+      delegate :ack,         :to => :stomp_client
 
       private
       attr_reader :stomp_client

@@ -74,6 +74,28 @@ module ManageIQ
           return raw_body unless headers['encoding'] == 'yaml'
           YAML.load(raw_body)
         end
+
+        def send_response(client, service, correlation_id, result)
+          response_options = {
+            :service  => "#{service}.response",
+            :affinity => correlation_id
+          }
+          address, response_headers = queue_for_publish(response_options)
+          raw_publish(client, address, result || '', response_headers.merge(:correlation_id => correlation_id))
+        end
+
+        def receive_response(client, service, correlation_id)
+          response_options = {
+            :service  => "#{service}.response",
+            :affinity => correlation_id
+          }
+          queue_name, response_headers = queue_for_subscribe(response_options)
+          client.subscribe(queue_name, response_headers) do |msg|
+            client.ack(msg)
+            yield decode_body(msg.headers, msg.body)
+            client.unsubscribe(queue_name)
+          end
+        end
       end
     end
   end
