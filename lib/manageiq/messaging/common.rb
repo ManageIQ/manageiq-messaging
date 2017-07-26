@@ -92,8 +92,11 @@ module ManageIQ
           queue_name, response_headers = queue_for_subscribe(response_options)
           client.subscribe(queue_name, response_headers) do |msg|
             client.ack(msg)
-            yield decode_body(msg.headers, msg.body)
-            client.unsubscribe(queue_name)
+            begin
+              yield decode_body(msg.headers, msg.body)
+            ensure
+              client.unsubscribe(queue_name)
+            end
           end
         end
       end
