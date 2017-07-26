@@ -1,6 +1,6 @@
 # Manageiq::Messaging
 
-ManageIQ library for ManageIQ compoments to exchange messages through its internal messaging bus.
+ManageIQ library for ManageIQ components to exchange messages through its internal messaging bus.
 
 ## Installation
 
