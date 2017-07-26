@@ -46,9 +46,8 @@ module ManageIQ
         obj = obj.find(instance_id) if instance_id
 
         msg_timeout = 600 # TODO: configurable per message
-        result = nil
-        Timeout.timeout(msg_timeout) do
-          result = obj.send(options[:method_name], *args)
+        result = Timeout.timeout(msg_timeout) do
+          obj.send(options[:method_name], *args)
         end
 
         run_job(miq_callback) if miq_callback

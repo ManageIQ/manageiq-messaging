@@ -11,8 +11,11 @@ module ManageIQ
         client = StompClient.new(options)
         return client unless block_given?
         if block_given?
-          yield client
-          client.close
+          begin
+            yield client
+          ensure
+            client.close
+          end
           nil
         end
       end
