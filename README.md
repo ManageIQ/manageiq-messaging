@@ -1,5 +1,12 @@
 # Manageiq::Messaging
 
+[![Gem Version](https://badge.fury.io/rb/manageiq-messaging.svg)](http://badge.fury.io/rb/manageiq-messaging)
+[![Build Status](https://travis-ci.org/ManageIQ/manageiq-messaging.svg)](https://travis-ci.org/ManageIQ/manageiq-messaging)
+[![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-messaging.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging)
+[![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-messaging/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging/coverage)
+[![Dependency Status](https://gemnasium.com/ManageIQ/manageiq-messaging.svg)](https://gemnasium.com/ManageIQ/manageiq-messaging)
+[![Security](https://hakiri.io/github/ManageIQ/manageiq-messaging/master.svg)](https://hakiri.io/github/ManageIQ/manageiq-messaging/master)
+
 ManageIQ library for ManageIQ components to exchange messages through its internal messaging bus.
 
 ## Installation
