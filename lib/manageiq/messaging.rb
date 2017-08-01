@@ -1,4 +1,5 @@
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/hash'
 require 'yaml'
 
 require 'manageiq/messaging/null_logger'
@@ -17,3 +18,4 @@ end
 
 require 'manageiq/messaging/version'
 require 'manageiq/messaging/client'
+require 'manageiq/messaging/received_message'
