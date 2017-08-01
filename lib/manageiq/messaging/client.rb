@@ -11,8 +11,11 @@ module ManageIQ
         client = StompClient.new(options)
         return client unless block_given?
         if block_given?
-          yield client
-          client.close
+          begin
+            yield client
+          ensure
+            client.close
+          end
           nil
         end
       end
@@ -28,12 +31,13 @@ module ManageIQ
       #     :instance_id
       #     :args
       #     :miq_callback
-      #   :sender    (optional, type of the publisher)
-      #   :sender_id (optional, identity of the publisher)
+      #   :sender    (optional, identify the sender)
       #   <other queue options TBA>
       #
-      def publish_message(options)
-        Queue.publish(self, options)
+      # Optionally a call back block {|response| block} can be provided to wait on
+      # the consumer to send an acknowledgment.
+      def publish_message(options, &block)
+        Queue.publish(self, options, &block)
       end
 
       # Publish multiple messages to a queue.
@@ -61,7 +65,7 @@ module ManageIQ
       #       msg.sender
       #       msg.message
       #       msg.payload
-      #       msg.ack_id (used to ack the message)
+      #       msg.ack_ref (used to ack the message)
       #     end
       #   end
       #
@@ -73,7 +77,7 @@ module ManageIQ
       # current subscriber disconnects normally or abnormally (e.g. crashed).
       # Make sure a message is properly acked whatever strategy you take.
       #
-      # To ack a message call `ack(msg.ack_id)`
+      # To ack a message call `ack(msg.ack_ref)`
       def subscribe_messages(options, &block)
         raise "A block is required" unless block_given?
 
@@ -98,8 +102,7 @@ module ManageIQ
       #   :service   (service is used to determine the topic address)
       #   :event     (event name)
       #   :payload   (user defined structure that describes the event)
-      #   :sender    (optional, type of the publisher)
-      #   :sender_id (optional, identity of the publisher)
+      #   :sender    (optional, identify the sender)
       #   <other queue options TBA>
       #
       def publish_topic(options)
@@ -108,11 +111,11 @@ module ManageIQ
 
       # Subscribe to receive topic type messages.
       # @param options [Hash] attributes to configure how to receive messages
-      #   :service    (service is used to determine the topic address)
-      #   :persist_id (optional, client needs to be have client_id to use this feature)
+      #   :service     (service is used to determine the topic address)
+      #   :persist_ref (optional, client needs to be have client_ref to use this feature)
       #
       # Persisted event: In order to consume events missed during the period when the client is
-      # offline, the subscriber needs to be reconnect always with the same client_id and persist_id
+      # offline, the subscriber needs to be reconnect always with the same client_ref and persist_ref
       #
       # A callback {|sender, event, payload| block } needs to be provided to consume the topic
       #
@@ -124,3 +127,4 @@ module ManageIQ
     end
   end
 end
+

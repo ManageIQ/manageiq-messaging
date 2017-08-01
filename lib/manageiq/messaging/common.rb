@@ -53,7 +53,7 @@ module ManageIQ
           queue_name = "topic/#{options[:service]}"
 
           headers = {:"subscription-type" => 'MULTICAST', :ack => 'client'}
-          headers[:"durable-subscription-name"] = options[:persist_id] if options[:persist_id]
+          headers[:"durable-subscription-name"] = options[:persist_ref] if options[:persist_ref]
 
           [queue_name, headers]
         end
@@ -73,6 +73,31 @@ module ManageIQ
         def decode_body(headers, raw_body)
           return raw_body unless headers['encoding'] == 'yaml'
           YAML.load(raw_body)
+        end
+
+        def send_response(client, service, correlation_ref, result)
+          response_options = {
+            :service  => "#{service}.response",
+            :affinity => correlation_ref
+          }
+          address, response_headers = queue_for_publish(response_options)
+          raw_publish(client, address, result || '', response_headers.merge(:correlation_id => correlation_ref))
+        end
+
+        def receive_response(client, service, correlation_ref)
+          response_options = {
+            :service  => "#{service}.response",
+            :affinity => correlation_ref
+          }
+          queue_name, response_headers = queue_for_subscribe(response_options)
+          client.subscribe(queue_name, response_headers) do |msg|
+            client.ack(msg)
+            begin
+              yield decode_body(msg.headers, msg.body)
+            ensure
+              client.unsubscribe(queue_name)
+            end
+          end
         end
       end
     end
