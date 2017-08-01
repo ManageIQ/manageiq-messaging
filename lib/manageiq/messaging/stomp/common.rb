@@ -1,27 +1,19 @@
 module ManageIQ
   module Messaging
-    module Common
-      def self.included(base)
-        base.extend ClassMethods
-      end
-
-      module ClassMethods
+    module Stomp
+      module Common
         private
 
-        def logger
-          ManageIQ::Messaging.logger
-        end
-
-        def raw_publish(client, address, body, headers)
-          client.publish(address, encode_body(headers, body), headers)
-          logger.info("Address(#{address}), msg(#{body.inspect}), headers(#{headers.inspect})")
+        def raw_publish(address, body, headers)
+          publish(address, encode_body(headers, body), headers)
+          logger.info("Published to address(#{address}), msg(#{body.inspect}), headers(#{headers.inspect})")
         end
 
         def queue_for_publish(options)
           affinity = options[:affinity] || 'none'
           address = "queue/#{options[:service]}.#{affinity}"
 
-          headers = {:"destination-type" => "ANYCAST"}
+          headers = {:"destination-type" => 'ANYCAST'}
           headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
           headers[:priority] = options[:priority] if options[:priority]
@@ -41,7 +33,7 @@ module ManageIQ
         def topic_for_publish(options)
           address = "topic/#{options[:service]}"
 
-          headers = {:"destination-type" => "MULTICAST"}
+          headers = {:"destination-type" => 'MULTICAST'}
           headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
           headers[:priority] = options[:priority] if options[:priority]
@@ -58,12 +50,6 @@ module ManageIQ
           [queue_name, headers]
         end
 
-        def assert_options(options, keys)
-          keys.each do |key|
-            raise "options must contains key #{key}" unless options.key?(key)
-          end
-        end
-
         def encode_body(headers, body)
           return body if body.kind_of?(String)
           headers[:encoding] = 'yaml'
@@ -75,27 +61,27 @@ module ManageIQ
           YAML.load(raw_body)
         end
 
-        def send_response(client, service, correlation_ref, result)
+        def send_response(service, correlation_ref, result)
           response_options = {
             :service  => "#{service}.response",
             :affinity => correlation_ref
           }
           address, response_headers = queue_for_publish(response_options)
-          raw_publish(client, address, result || '', response_headers.merge(:correlation_id => correlation_ref))
+          raw_publish(address, result || '', response_headers.merge(:correlation_id => correlation_ref))
         end
 
-        def receive_response(client, service, correlation_ref)
+        def receive_response(service, correlation_ref)
           response_options = {
             :service  => "#{service}.response",
             :affinity => correlation_ref
           }
           queue_name, response_headers = queue_for_subscribe(response_options)
-          client.subscribe(queue_name, response_headers) do |msg|
-            client.ack(msg)
+          subscribe(queue_name, response_headers) do |msg|
+            ack(msg)
             begin
               yield decode_body(msg.headers, msg.body)
             ensure
-              client.unsubscribe(queue_name)
+              unsubscribe(queue_name)
             end
           end
         end
