@@ -1,26 +1,6 @@
 require "spec_helper"
 
 describe ManageIQ::Messaging::Client do
-  before do
-    module ManageIQ::Messaging::Test
-      class Client < ManageIQ::Messaging::Client
-        def initialize(options); end
-        def close; end
-        def publish_message_impl(args); end
-        def publish_topic_impl(args); end
-        def publish_messages_impl(args); end
-        def subscribe_messages_impl(args); end
-        def subscribe_topic_impl(args); end
-        def subscribe_background_job_impl(args); end
-      end
-    end
-  end
-
-  after do
-    ManageIQ::Messaging::Test.send(:remove_const, :Client)
-    ManageIQ::Messaging.send(:remove_const, :Test)
-  end
-
   subject { described_class.open('Test', {}) }
 
   describe '.open' do

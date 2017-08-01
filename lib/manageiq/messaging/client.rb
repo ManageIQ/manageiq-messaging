@@ -143,8 +143,6 @@ module ManageIQ
         subscribe_topic_impl(options, &block)
       end
 
-      Struct.new("ManageIQ_Messaging_ReceivedMessage", :sender, :message, :payload, :ack_ref)
-
       private
 
       def logger
@@ -152,11 +150,9 @@ module ManageIQ
       end
 
       def assert_options(options, keys)
-        keys.each do |key|
-          raise ArgumentError, "options must contain key #{key}" unless options.key?(key)
-        end
+        missing = keys - options.keys
+        raise ArgumentError, "options must contain keys #{missing}" unless missing.empty?
       end
     end
   end
 end
-
