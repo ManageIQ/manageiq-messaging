@@ -100,14 +100,14 @@ Provide a call block if you want `#publish_message` to wait on a response from t
 ### Publish and subscribe background jobs
 Background Job is a special type of message with a known `class_name` and the subscriber knows how to process the message without a user block
 ```
-  client.publich_message(
+  client.publish_message(
     :service    => 'generic',
     :class_name => 'MiqTask',
     :messge     => 'update_attributes',
     :payload    => {
       :instance_id => 2,
       :args        => [{:status => 'Timeout'}]
-    }
+    })
     
   client.subscribe_background_job(:service => 'generic')
 ```
