@@ -6,22 +6,12 @@ require 'manageiq/messaging/version'
 Gem::Specification.new do |spec|
   spec.name          = "manageiq-messaging"
   spec.version       = ManageIQ::Messaging::VERSION
-  spec.authors       = ["Bill Wei"]
-  spec.email         = ["bilwei@redhat.com"]
+  spec.authors       = ["ManageIQ Authors"]
 
-  spec.summary       = 'A library for publishing and subscribe messages between manageiq services'
-  spec.description   = 'TBA'
+  spec.summary       = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
+  spec.description   = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
   spec.homepage      = 'http://github.com/ManageIQ/manageiq-messaging'
-  spec.license       = 'Apache 2.0'
-
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
-  end
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
@@ -37,6 +27,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+<<<<<<< 4fd654fd133243bafddbffeb6eda7cd4f2b8ba57
   spec.add_development_dependency "rubocop"
+=======
+>>>>>>> General cleanup of README and documentation
   spec.add_development_dependency "simplecov"
 end
