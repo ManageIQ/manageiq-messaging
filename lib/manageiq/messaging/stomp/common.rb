@@ -6,7 +6,7 @@ module ManageIQ
 
         def raw_publish(address, body, headers)
           publish(address, encode_body(headers, body), headers)
-          logger.info("Published to address(#{address}), msg(#{body.inspect}), headers(#{headers.inspect})")
+          logger.info("Published to address(#{address}), msg(#{payload_log(body.inspect)}), headers(#{headers.inspect})")
         end
 
         def queue_for_publish(options)
@@ -59,6 +59,10 @@ module ManageIQ
         def decode_body(headers, raw_body)
           return raw_body unless headers['encoding'] == 'yaml'
           YAML.load(raw_body)
+        end
+
+        def payload_log(payload)
+          payload.to_s[0..100]
         end
 
         def send_response(service, correlation_ref, result)

@@ -21,7 +21,7 @@ module ManageIQ
               sender = event.headers['sender']
               event_type = event.headers['event_type']
               event_body = decode_body(event.headers, event.body)
-              logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
+              logger.info("Event received: queue(#{queue_name}), event(#{payload_log(event_body)}), headers(#{event.headers})")
               yield sender, event_type, event_body
               logger.info("Event processed")
             end

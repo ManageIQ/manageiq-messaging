@@ -28,13 +28,13 @@ module ManageIQ
             sender = msg.headers['sender']
             message_type = msg.headers['message_type']
             message_body = decode_body(msg.headers, msg.body)
-            logger.info("Message received: queue(#{queue_name}), msg(#{message_body}), headers(#{msg.headers})")
+            logger.info("Message received: queue(#{queue_name}), msg(#{payload_log(message_body)}), headers(#{msg.headers})")
 
             result = yield [Struct::ManageIQ_Messaging_ReceivedMessage.new(sender, message_type, message_body, msg)]
             logger.info("Message processed")
 
             correlation_ref = msg.headers['correlation_id']
-            if correlation_id
+            if correlation_ref
               result = result.first if result.kind_of?(Array)
               send_response(options[:service], correlation_ref, result)
             end
