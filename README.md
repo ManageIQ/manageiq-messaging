@@ -61,7 +61,7 @@ This is the one-to-one publish/subscribe pattern. Multiple subscribers can subsc
     :affinity => 'ems_amazon1', 
     :message  => 'power_on', 
     :payload  => {
-      :ems_ref => 'u987'
+      :ems_ref => 'u987',
       :id      => '123'
     })
     
@@ -90,7 +90,7 @@ Provide a call block if you want `#publish_message` to wait on a response from t
     :affinity => 'ems_amazon1', 
     :message  => 'power_on', 
     :payload  => {
-      :ems_ref => 'u987'
+      :ems_ref => 'u987',
       :id      => '123'
     }) do |result|
       ansible_install_pkg(vm1) if result == 'running'
@@ -122,7 +122,7 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
     :event   => 'powered_on',
     :sender  => 'ems_amazon1',
     :payload => {
-      :ems_ref   => 'uid987'
+      :ems_ref   => 'uid987',
       :timestamp => '1501091391'
     })
     
