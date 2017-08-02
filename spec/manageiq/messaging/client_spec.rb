@@ -21,7 +21,7 @@ describe ManageIQ::Messaging::Client do
     ManageIQ::Messaging.send(:remove_const, :Test)
   end
 
-  subject { described_class.open('Test', {}) }
+  subject { described_class.open({:protocol => 'Test'}) }
 
   describe '.open' do
     it 'creates an instance of a type specific client' do
@@ -29,7 +29,7 @@ describe ManageIQ::Messaging::Client do
     end
 
     it 'closes the client before exit if it opens with a block' do
-      described_class.open('Test', {}) do |client|
+      described_class.open(:protocol => 'Test') do |client|
         expect(client).to receive(:close)
       end
     end
