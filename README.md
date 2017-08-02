@@ -33,11 +33,12 @@ Or install it yourself as:
   ManageIQ::Messaging.logger = Logger.new(STDOUT)
 
   client = ManageIQ::Messaging::Client.open(
-    :host      => 'localhost',
-    :port      => 61616,
-    :password  => 'smartvm',
-    :username  => 'admin',
-    :client_id => 'generic_1'
+    :Stomp,
+    :host       => 'localhost',
+    :port       => 61616,
+    :password   => 'smartvm',
+    :username   => 'admin',
+    :client_ref => 'generic_1'
   )
 
   # publish or consume messages using the client
@@ -55,7 +56,8 @@ Alternately, you can pass a block to `.open` without the need to explicitly clos
     :username  => 'admin',
     :client_id => 'generic_1'
   ) do |client|
-    # do stuff with the client
+      # do stuff with the client
+    end
   end
 ```
 
@@ -137,18 +139,18 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
   client.publish_topic(
     :service => 'provider_events',
     :event   => 'powered_on',
-    :sender  => 'ems_amazon1',
+    :sender  => 'ems_amazon1', # optional
     :payload => {
       :ems_ref   => 'uid987',
       :timestamp => '1501091391'
     })
 
-  client.subscribe_topic(:service => 'provider_events', :persist_id => 'automate_1') do |sender, event, payload|
-    # do stuff with event and payload. sender is optional
+  client.subscribe_topic(:service => 'provider_events', :persist_ref => 'automate_1') do |sender, event, payload|
+    # do stuff with event and payload. sender may be nil if not set by the publisher
   end
 ```
 
-By default, events are delivered to live subscribers only. `subscribe_topic`'s `persist_id` is not required. If a subscriber wants to receive the events it missed when it is offline, it should always create with same same `client_id` and subscribe to the topic with the same `persist_id`.
+By default, events are delivered to live subscribers only. `subscribe_topic`'s `persist_ref` is not required. If a subscriber wants to receive the events it missed when it is offline, it should always create with same same `client_ref` and subscribe to the topic with the same `persist_ref`.
 
 ## Development
 
