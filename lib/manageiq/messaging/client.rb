@@ -4,18 +4,15 @@ module ManageIQ
       require 'manageiq/messaging/stomp/client'
 
       # Open or create a connection to the message broker
-      # @param type [String or Symbol] client type, available choices are:
-      #   :Stomp
-      #   :AMQP
-      #   :MiqQueue
       # @param options [Hash] the connection options
       # @return [Client, nil] the client object if no block is given
       #   The optional block supply {|client| block }. The client will
       #   be automatically closed when the block terminates
       #
       # Avaiable type:
-      def self.open(type = :Stomp, options)
-        client = Object.const_get("ManageIQ::Messaging::#{type}::Client").new(options)
+      def self.open(options)
+        protocol = options[:protocol] || :Stomp
+        client = Object.const_get("ManageIQ::Messaging::#{protocol}::Client").new(options)
         return client unless block_given?
 
         begin

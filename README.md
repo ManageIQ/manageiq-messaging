@@ -33,7 +33,6 @@ Or install it yourself as:
   ManageIQ::Messaging.logger = Logger.new(STDOUT)
 
   client = ManageIQ::Messaging::Client.open(
-    :Stomp,
     :host       => 'localhost',
     :port       => 61616,
     :password   => 'smartvm',
