@@ -49,11 +49,11 @@ Alternately, you can pass a block to `.open` without the need to explicitly clos
 
 ```
   ManageIQ::Messaging::Client.open(
-    :host      => 'localhost',
-    :port      => 61616,
-    :password  => 'smartvm',
-    :username  => 'admin',
-    :client_id => 'generic_1'
+    :host       => 'localhost',
+    :port       => 61616,
+    :password   => 'smartvm',
+    :username   => 'admin',
+    :client_ref => 'generic_1'
   ) do |client|
       # do stuff with the client
     end
