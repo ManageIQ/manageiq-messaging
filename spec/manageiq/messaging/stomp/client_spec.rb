@@ -114,6 +114,49 @@ describe ManageIQ::Messaging::Stomp::Client do
     end
   end
 
+  describe '#publish_message with json encoder' do
+    subject do
+      expect(::Stomp::Client).to receive(:new).and_return(raw_client)
+      described_class.new(:host => 'localhost', :port => 1234, :encoding => "json")
+    end
+
+    it 'sends alternative encoding to the queue' do
+      expect(raw_client).to receive(:publish).with(
+        'queue/s.uid',
+        "{\"instance_id\":1,\"args\":[\"arg1\",2]}",
+        hash_including(
+          :"destination-type" => 'ANYCAST',
+          :message_type       => 'my_method',
+          :class_name         => 'MyClass',
+          :encoding           => "json"))
+
+      subject.publish_message(
+        :service    => 's',
+        :class_name => 'MyClass',
+        :message    => 'my_method',
+        :affinity   => 'uid',
+        :payload    => { :instance_id => 1, :args => ['arg1', 2] })
+    end
+
+    it 'sends nil encoding for strings' do
+      expect(raw_client).to receive(:publish).with(
+        'queue/s.uid',
+        "string",
+        {
+          :"destination-type" => 'ANYCAST',
+          :message_type       => 'my_method',
+          :class_name         => 'MyClass',
+        })
+
+      subject.publish_message(
+        :service    => 's',
+        :class_name => 'MyClass',
+        :message    => 'my_method',
+        :affinity   => 'uid',
+        :payload    => 'string')
+    end
+  end
+
   describe '#subscribe_messages' do
     it 'listens to the queue' do
       expect(raw_client).to receive(:subscribe).with(
