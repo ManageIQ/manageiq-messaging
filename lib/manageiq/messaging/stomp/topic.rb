@@ -16,13 +16,13 @@ module ManageIQ
           queue_name, headers = topic_for_subscribe(options)
 
           subscribe(queue_name, headers) do |event|
-            ack(event)
             begin
               sender = event.headers['sender']
               event_type = event.headers['event_type']
               event_body = decode_body(event.headers, event.body)
               logger.info("Event received: queue(#{queue_name}), event(#{payload_log(event_body)}), headers(#{event.headers})")
               yield sender, event_type, event_body
+              ack(event)
               logger.info("Event processed")
             end
           end
