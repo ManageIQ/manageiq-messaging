@@ -14,8 +14,7 @@ module ManageIQ
         include Topic
 
         private *delegate(:subscribe, :unsubscribe, :publish, :to => :stomp_client)
-        delegate :close, :to => :stomp_client
-        delegate :ack,   :to => :stomp_client
+        delegate :ack, :close, :to => :stomp_client
 
         private
 
@@ -29,16 +28,17 @@ module ManageIQ
         #   :client_ref (optional)
         #   :heartbeat  (optional, default to true)
         def initialize(options)
-          host = { :host => options[:host], :port => options[:port] }
+          host = options.slice(:host, :port)
           host[:passcode] = options[:password] if options[:password]
           host[:login] = options[:username] if options[:username]
 
           headers = {}
-          unless options[:heartbeat] == false
+          if options[:heartbeat].nil? || options[:heartbeat]
             headers.merge!(
               :host             => options[:host],
               :"accept-version" => "1.2",
-              :"heart-beat"     => "2000,0")
+              :"heart-beat"     => "2000,0"
+            )
           end
           headers[:"client-id"] = options[:client_ref] if options[:client_ref]
 
