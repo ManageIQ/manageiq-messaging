@@ -14,9 +14,10 @@ module ManageIQ
           address = "queue/#{options[:service]}.#{affinity}"
 
           headers = {:"destination-type" => 'ANYCAST'}
-          headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
+          headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
-          headers[:priority] = options[:priority] if options[:priority]
+          headers[:priority]           = options[:priority] if options[:priority]
+          headers[:_AMQ_GROUP_ID]      = options[:group_name] if options[:group_name]
 
           [address, headers]
         end
@@ -34,9 +35,9 @@ module ManageIQ
           address = "topic/#{options[:service]}"
 
           headers = {:"destination-type" => 'MULTICAST'}
-          headers[:expires] = options[:expires_on].to_i * 1000 if options[:expires_on]
+          headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
-          headers[:priority] = options[:priority] if options[:priority]
+          headers[:priority]           = options[:priority] if options[:priority]
 
           [address, headers]
         end

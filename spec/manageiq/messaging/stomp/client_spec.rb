@@ -57,9 +57,23 @@ describe ManageIQ::Messaging::Stomp::Client do
       expect(raw_client).to receive(:publish).with(
         'queue/s.uid',
         'p',
-        hash_including(:"destination-type" => 'ANYCAST', :message_type => 'm'))
+        hash_including(
+          :"destination-type" => 'ANYCAST',
+          :message_type       => 'm',
+          :priority           => 3,
+          :AMQ_SCHEDULED_TIME => Time.new(500).to_i * 1000,
+          :expires            => Time.new(600).to_i * 1000,
+          :_AMQ_GROUP_ID      => 'group1'))
 
-      subject.publish_message(:service => 's', :message => 'm', :affinity => 'uid', :payload => 'p')
+      subject.publish_message(
+        :service    => 's',
+        :message    => 'm',
+        :affinity   => 'uid',
+        :payload    => 'p',
+        :priority   => 3,
+        :deliver_on => Time.new(500),
+        :expires_on => Time.new(600),
+        :group_name => 'group1')
     end
 
     it 'sends a message without affinity to the queue' do
