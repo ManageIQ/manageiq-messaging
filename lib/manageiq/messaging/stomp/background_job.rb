@@ -8,8 +8,8 @@ module ManageIQ
           queue_name, headers = queue_for_subscribe(options)
 
           subscribe(queue_name, headers) do |msg|
-            ack(msg)
             begin
+              ack(msg)
               assert_options(msg.headers, ['class_name', 'message_type'])
 
               msg_options = decode_body(msg.headers, msg.body)
@@ -30,6 +30,9 @@ module ManageIQ
                   logger.error("Error encountered during <ActiveRecord::Base.connection.reconnect!> error:#{err.class.name}: #{err.message}")
                 end
               end
+            rescue => e
+              logger.error("Background job error: #{e.message}")
+              logger.error(e.backtrace.join("\n"))
             end
           end
         end
