@@ -16,14 +16,19 @@ module ManageIQ
           queue_name, headers = topic_for_subscribe(options)
 
           subscribe(queue_name, headers) do |event|
-            ack(event)
+            begin
+              ack(event)
 
-            sender = event.headers['sender']
-            event_type = event.headers['event_type']
-            event_body = decode_body(event.headers, event.body)
-            logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
-            yield sender, event_type, event_body
-            logger.info("Event processed")
+              sender = event.headers['sender']
+              event_type = event.headers['event_type']
+              event_body = decode_body(event.headers, event.body)
+              logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
+              yield sender, event_type, event_body
+              logger.info("Event processed")
+            rescue => e
+              logger.error("Event processing error: #{e.message}")
+              logger.error(e.backtrace.join("\n"))
+            end
           end
         end
       end
