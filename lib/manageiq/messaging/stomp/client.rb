@@ -16,17 +16,19 @@ module ManageIQ
         private *delegate(:subscribe, :unsubscribe, :publish, :to => :stomp_client)
         delegate :ack, :close, :to => :stomp_client
 
+        attr_accessor :encoding
+
         private
 
         attr_reader :stomp_client
 
-        # options
-        #   :host
-        #   :username
-        #   :password
-        #   :port
-        #   :client_ref (optional)
-        #   :heartbeat  (optional, default to true)
+        # @options options :host
+        # @options options :username
+        # @options options :password
+        # @options options :port
+        # @options options :client_ref (optional)
+        # @options options :heartbeat  (optional, default to true)
+        # @options options :encoding (default to 'yaml')
         def initialize(options)
           host = options.slice(:host, :port)
           host[:passcode] = options[:password] if options[:password]
@@ -42,6 +44,8 @@ module ManageIQ
           end
           headers[:"client-id"] = options[:client_ref] if options[:client_ref]
 
+          @encoding = options[:encoding] || 'yaml'
+          require "json" if @encoding == "json"
           @stomp_client = ::Stomp::Client.new(:hosts => [host], :connect_headers => headers)
         end
       end
