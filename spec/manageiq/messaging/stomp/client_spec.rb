@@ -63,7 +63,8 @@ describe ManageIQ::Messaging::Stomp::Client do
           :priority           => 3,
           :AMQ_SCHEDULED_TIME => Time.new(500).to_i * 1000,
           :expires            => Time.new(600).to_i * 1000,
-          :_AMQ_GROUP_ID      => 'group1'))
+          :_AMQ_GROUP_ID      => 'group1',
+          :persistent         => true))
 
       subject.publish_message(
         :service    => 's',
@@ -128,7 +129,8 @@ describe ManageIQ::Messaging::Stomp::Client do
           :"destination-type" => 'ANYCAST',
           :message_type       => 'my_method',
           :class_name         => 'MyClass',
-          :encoding           => "json"))
+          :encoding           => "json",
+          :persistent         => true))
 
       subject.publish_message(
         :service    => 's',
@@ -142,11 +144,12 @@ describe ManageIQ::Messaging::Stomp::Client do
       expect(raw_client).to receive(:publish).with(
         'queue/s.uid',
         "string",
-        {
+        hash_including(
           :"destination-type" => 'ANYCAST',
           :message_type       => 'my_method',
           :class_name         => 'MyClass',
-        })
+          :persistent         => true
+        ))
 
       subject.publish_message(
         :service    => 's',
