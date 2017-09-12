@@ -37,7 +37,8 @@ Or install it yourself as:
     :port       => 61616,
     :password   => 'smartvm',
     :username   => 'admin',
-    :client_ref => 'generic_1'
+    :client_ref => 'generic_1',
+    :encoding   => 'json' # default 'yaml'
   )
 
   # publish or consume messages using the client
