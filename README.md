@@ -79,7 +79,7 @@ This is the one-to-one publish/subscribe pattern. Multiple subscribers can subsc
   client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1', :limit => 10) do |messages|
     messages.each do |msg|
       # do stuff with msg.message and msg.payload
-      client.ack(msg.ack_id) # ack is required, but you can do it before or after "do stuff"
+      client.ack(msg.ack_ref) # ack is required, but you can do it before or after "do stuff"
     end
   end
 
