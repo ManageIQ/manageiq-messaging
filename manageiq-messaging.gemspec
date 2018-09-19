@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'activesupport', '>= 4.2.2'
+  spec.add_dependency 'ruby-kafka', '>=0.7.0'
   spec.add_dependency 'stomp', '>= 1.4.4'
 
   spec.add_development_dependency "bundler", "~> 1.13"

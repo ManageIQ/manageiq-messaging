@@ -1,8 +1,6 @@
 module ManageIQ
   module Messaging
     class Client
-      require 'manageiq/messaging/stomp/client'
-
       # Open or create a connection to the message broker
       # @param options [Hash] the connection options
       # @return [Client, nil] the client object if no block is given
