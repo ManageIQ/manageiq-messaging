@@ -2,7 +2,7 @@ module ManageIQ
   module Messaging
     module Kafka
       module Queue
-        def publish_message_impl(options, &_block)
+        def publish_message_impl(options)
           raise ArgumentError, "Kafka messaging implementation does not take a block" if block_given?
           raw_publish(true, *queue_for_publish(options))
         end

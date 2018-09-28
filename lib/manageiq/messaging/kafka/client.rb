@@ -43,7 +43,7 @@ module ManageIQ
         # @options options :client_ref (optional)
         # @options options :encoding (default to 'yaml')
         def initialize(options)
-          hosts = Array(options[:hosts]) + Array(options[:host])
+          hosts = Array(options[:hosts] || options[:host])
           hosts.collect! { |host| "#{host}:#{options[:port]}" }
 
           @encoding = options[:encoding] || 'yaml'
