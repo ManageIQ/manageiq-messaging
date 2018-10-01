@@ -9,7 +9,7 @@ module ManageIQ
         end
 
         def subscribe_topic_impl(options, &block)
-          topic = options[:service]
+          topic = address(options)
           persist_ref = options[:persist_ref]
 
           if persist_ref
