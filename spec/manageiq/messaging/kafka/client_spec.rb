@@ -36,11 +36,15 @@ describe ManageIQ::Messaging::Kafka::Client do
     it 'sends the message to the topic' do
       expect(producer).to receive(:deliver_messages)
       expect(producer).to receive(:produce).with(
-        "---\npayload: p\nevent_type: e\nencoding: yaml\n",
-        hash_including(:topic => 's', :partition_key => 'a')
+        "---\n- 1\n- 2\n- 3\n",
+        hash_including(
+          :topic         => 's',
+          :partition_key => 'a',
+          :headers       => hash_including(:event_type => 'e', :encoding => 'yaml')
+        )
       )
 
-      subject.publish_topic(:service => 's', :event => 'e', :payload => 'p', :affinity => 'a')
+      subject.publish_topic(:service => 's', :event => 'e', :group_name => 'a', :payload => [1, 2, 3])
     end
   end
 
@@ -63,11 +67,11 @@ describe ManageIQ::Messaging::Kafka::Client do
   end
 
   describe '#publish_message' do
-    it 'sends a regular message to the queue' do
+    it 'sends a message with affinity to the queue' do
       expect(producer).to receive(:deliver_messages)
       expect(producer).to receive(:produce).with(
-        "---\npayload: p\nmessage_type: m\nencoding: yaml\n",
-        hash_including(:topic => 's', :partition_key => 'uid')
+        'p',
+        hash_including(:topic => 's.uid', :headers => {:message_type => 'm'})
       )
 
       subject.publish_message(
@@ -80,8 +84,8 @@ describe ManageIQ::Messaging::Kafka::Client do
     it 'sends a message without affinity to the queue' do
       expect(producer).to receive(:deliver_messages)
       expect(producer).to receive(:produce).with(
-        "---\npayload: p\nsender: me\nmessage_type: m\nencoding: yaml\n",
-        :topic => 's'
+        'p',
+        hash_including(:topic => 's', :headers => hash_including(:message_type => 'm', :sender => 'me'))
       )
 
       subject.publish_message(:service => 's', :message => 'm', :payload => 'p', :sender => 'me')
@@ -97,8 +101,11 @@ describe ManageIQ::Messaging::Kafka::Client do
     it 'sends alternative encoding to the queue' do
       expect(producer).to receive(:deliver_messages)
       expect(producer).to receive(:produce).with(
-        "{\"payload\":{\"instance_id\":1,\"args\":[\"arg1\",2]},\"message_type\":\"my_method\",\"class_name\":\"MyClass\",\"encoding\":\"json\"}",
-        hash_including(:topic => 's', :partition_key => 'uid')
+        "{\"instance_id\":1,\"args\":[\"arg1\",2]}",
+        hash_including(
+          :topic => 's.uid',
+          :headers => hash_including(:message_type => 'my_method', :class_name => 'MyClass', :encoding => 'json')
+        )
       )
 
       subject.publish_message(
@@ -115,7 +122,7 @@ describe ManageIQ::Messaging::Kafka::Client do
 
     it 'listens to the queue with built-in group_id' do
       expect(raw_client).to receive(:consumer).with(:group_id => described_class::GROUP_FOR_QUEUE_MESSAGES).and_return(consumer)
-      expect(consumer).to receive(:subscribe).with('s')
+      expect(consumer).to receive(:subscribe).with('s.uid')
       expect(consumer).to receive(:each_batch)
 
       subject.subscribe_messages(:service => 's', :affinity => 'uid') { |messages| nil }
@@ -124,8 +131,8 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#publish_messages' do
     it 'sends to the queue one by one but delivers once' do
-      expect(producer).to receive(:produce).with("---\npayload: p1\nmessage_type: m\nencoding: yaml\n", :topic => 's')
-      expect(producer).to receive(:produce).with("---\npayload: p2\nmessage_type: m\nencoding: yaml\n", :topic => 's')
+      expect(producer).to receive(:produce).with('p1', hash_including(:topic => 's', :headers => {:message_type => 'm'}))
+      expect(producer).to receive(:produce).with('p2', hash_including(:topic => 's', :headers => {:message_type => 'm'}))
       expect(producer).to receive(:deliver_messages).once
       subject.publish_messages([
         {:service => 's', :message => 'm', :payload => 'p1' },

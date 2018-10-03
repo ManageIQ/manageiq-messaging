@@ -2,6 +2,9 @@ module ManageIQ
   module Messaging
     module Stomp
       module Common
+        require 'manageiq/messaging/common'
+        include ManageIQ::Messaging::Common
+
         private
 
         def raw_publish(address, body, headers)
@@ -49,34 +52,6 @@ module ManageIQ
           headers[:"durable-subscription-name"] = options[:persist_ref] if options[:persist_ref]
 
           [queue_name, headers]
-        end
-
-        def encode_body(headers, body)
-          return body if body.kind_of?(String)
-          headers[:encoding] = encoding
-          case encoding
-          when "json"
-            JSON.generate(body)
-          when "yaml"
-            body.to_yaml
-          else
-            raise "unknown message encoding: #{encoding}"
-          end
-        end
-
-        def decode_body(headers, raw_body)
-          case headers["encoding"]
-          when "json"
-            JSON.parse(raw_body)
-          when "yaml"
-            YAML.load(raw_body)
-          else
-            raw_body
-          end
-        end
-
-        def payload_log(payload)
-          payload.to_s[0..100]
         end
 
         def send_response(service, correlation_ref, result)

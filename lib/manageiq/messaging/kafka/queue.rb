@@ -13,7 +13,7 @@ module ManageIQ
         end
 
         def subscribe_messages_impl(options)
-          topic = options[:service]
+          topic = address(options)
 
           consumer = queue_consumer
           consumer.subscribe(topic)

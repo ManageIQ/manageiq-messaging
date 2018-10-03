@@ -39,9 +39,9 @@ module ManageIQ
         # @options options :host
         # @options options :hosts (array)
         # @options options :port
-        # @options options :group_ref
         # @options options :client_ref (optional)
         # @options options :encoding (default to 'yaml')
+        # @options options :ssl_ca_cert, :ssl_client_cert, :ssl_client_cert_key, :sasl_gssapi_principal, :sasl_gssapi_keytab, :sasl_plain_username, :sasl_plain_password, :sasl_scram_username, :sasl_scram_password, :sasl_scram_mechanism
         def initialize(options)
           hosts = Array(options[:hosts] || options[:host])
           hosts.collect! { |host| "#{host}:#{options[:port]}" }
@@ -51,6 +51,8 @@ module ManageIQ
 
           connection_opts = {}
           connection_opts[:client_id] = options[:client_ref] if options[:client_ref]
+
+          connection_opts.merge!(options.slice(:ssl_ca_cert, :ssl_client_cert, :ssl_client_cert_key, :sasl_gssapi_principal, :sasl_gssapi_keytab, :sasl_plain_username, :sasl_plain_password, :sasl_scram_username, :sasl_scram_password, :sasl_scram_mechanism))
 
           @kafka_client = ::Kafka.new(hosts, connection_opts)
         end
