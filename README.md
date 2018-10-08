@@ -29,10 +29,13 @@ Or install it yourself as:
 
 ### Initialize a client
 
+It is not recommended to directly create an actual client through `new` operation. Follow the example by specifying a protocol. This allows to easily switch the underlying messaging system from one type to another. Currently `:Stomp` and `:Kafka` are implemented.
+
 ```
   ManageIQ::Messaging.logger = Logger.new(STDOUT)
 
   client = ManageIQ::Messaging::Client.open(
+    :protocol   => 'Stomp',
     :host       => 'localhost',
     :port       => 61616,
     :password   => 'smartvm',
@@ -46,10 +49,11 @@ Or install it yourself as:
   client.close
 ```
 
-Alternately, you can pass a block to `.open` without the need to explicitly close the client
+Alternatively, you can pass a block to `.open` without the need to explicitly close the client.
 
 ```
   ManageIQ::Messaging::Client.open(
+    :protocol   => 'Stomp',
     :host       => 'localhost',
     :port       => 61616,
     :password   => 'smartvm',
@@ -76,15 +80,15 @@ This is the one-to-one publish/subscribe pattern. Multiple subscribers can subsc
     }
   )
 
-  client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1', :limit => 10) do |messages|
+  client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1') do |messages|
     messages.each do |msg|
       # do stuff with msg.message and msg.payload
-      client.ack(msg.ack_ref) # ack is required, but you can do it before or after "do stuff"
+      client.ack(msg.ack_ref)
     end
   end
 
   # You can create a second client instance and call subscribe_messages with
-  # the same options.  Then, both clients will take turns to consume the messages.
+  # the same options. Then both clients will take turns to consume the messages.
 ```
 
 For better sending performance, you can publish a collection of messages together
@@ -95,7 +99,7 @@ For better sending performance, you can publish a collection of messages togethe
   client.publish_messages([msg1, msg2])
 ```
 
-Provide a block if you want `#publish_message` to wait on a response from the subscriber.
+Provide a block if you want `#publish_message` to wait on a response from the subscriber. This feature may not be supported by every underlying messaging system.
 
 ```
   client.publish_message(
@@ -150,7 +154,7 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
   end
 ```
 
-By default, events are delivered to live subscribers only. `subscribe_topic`'s `persist_ref` is not required. If a subscriber wants to receive the events it missed when it is offline, it should always create with same same `client_ref` and subscribe to the topic with the same `persist_ref`.
+By default, events are delivered to live subscribers only. Some messaging systems support persistence with options.
 
 ## Development
 

@@ -2,6 +2,8 @@ module ManageIQ
   module Messaging
     module Stomp
       module Queue
+        private
+
         def publish_message_impl(options, &block)
           address, headers = queue_for_publish(options)
           headers[:sender]         = options[:sender] if options[:sender]

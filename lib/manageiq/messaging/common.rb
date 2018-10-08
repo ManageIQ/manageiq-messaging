@@ -1,6 +1,8 @@
 module ManageIQ
   module Messaging
     module Common
+      private
+
       def encode_body(headers, body)
         return body if body.kind_of?(String)
         headers[:encoding] = encoding
