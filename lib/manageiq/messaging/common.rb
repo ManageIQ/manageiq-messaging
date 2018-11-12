@@ -31,6 +31,10 @@ module ManageIQ
       def payload_log(payload)
         payload.to_s[0..100]
       end
+
+      def auto_ack?(options)
+        options.key?(:auto_ack) ? options[:auto_ack] : true
+      end
     end
   end
 end

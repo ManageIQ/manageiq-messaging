@@ -43,12 +43,32 @@ describe ManageIQ::Messaging::Stomp::Client do
   end
 
   describe '#subscribe_topic' do
-    it 'listens to the topic' do
-      expect(raw_client).to receive(:subscribe).with(
-        'topic/s',
-        hash_including(:"subscription-type" => 'MULTICAST', :ack => 'client', :"durable-subscription-name" => 'ref'))
+    let(:raw_message) { double(:raw_message, :headers => {'sender' => 'x', 'event_type' => 'y'}, :body => 'v') }
 
-      subject.subscribe_topic(:service => 's', :persist_ref => 'ref') { |_a, _b, _c| nil }
+    context 'no auto_ack' do
+      let(:auto_ack) { false }
+
+      it 'listens to the topic' do
+        expect(raw_client).to receive(:subscribe).with(
+          'topic/s',
+          hash_including(:"subscription-type" => 'MULTICAST', :ack => 'client', :"durable-subscription-name" => 'ref')).and_yield(raw_message)
+        expect(subject).not_to receive(:ack)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'ref', :auto_ack => auto_ack) { |message| nil}
+      end
+    end
+
+    context 'with auto_ack' do
+      let(:auto_ack) { true }
+
+      it 'listens to the topic' do
+        expect(raw_client).to receive(:subscribe).with(
+          'topic/s',
+          hash_including(:"subscription-type" => 'MULTICAST', :ack => 'client', :"durable-subscription-name" => 'ref')).and_yield(raw_message)
+        expect(raw_client).to receive(:ack).with(raw_message)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'ref', :auto_ack => auto_ack) { |message| nil}
+      end
     end
   end
 

@@ -50,13 +50,16 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#subscribe_topic' do
     let(:consumer) { double(:topic_consumer) }
+    let(:auto_ack) { false }
+    let(:raw_message) { double(:raw_message, :headers => {'sender' => 'x', 'event_type' => 'y'}, :value => 'v') }
 
     it 'listens to the topic with persist_ref' do
       expect(raw_client).to receive(:consumer).with(:group_id => 'pid').and_return(consumer)
       expect(consumer).to receive(:subscribe).with('s', :start_from_beginning => false)
-      expect(consumer).to receive(:each_message)
+      expect(consumer).to receive(:each_message).with(:automatically_mark_as_processed => auto_ack).and_yield(raw_message)
+      expect(consumer).to receive(:mark_message_as_processed)
 
-      subject.subscribe_topic(:service => 's', :persist_ref => 'pid') { |_a, _b, _c| nil }
+      subject.subscribe_topic(:service => 's', :persist_ref => 'pid', :auto_ack => auto_ack) { |message| subject.ack(message.ack_ref) }
     end
 
     it 'listens to the topic without persist_ref' do
@@ -119,13 +122,14 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#subscribe_messages' do
     let(:consumer) { double(:message_consumer) }
+    let(:auto_ack) { false }
 
     it 'listens to the queue with built-in group_id' do
       expect(raw_client).to receive(:consumer).with(:group_id => described_class::GROUP_FOR_QUEUE_MESSAGES).and_return(consumer)
       expect(consumer).to receive(:subscribe).with('s.uid')
-      expect(consumer).to receive(:each_batch)
+      expect(consumer).to receive(:each_batch).with(:automatically_mark_as_processed => auto_ack)
 
-      subject.subscribe_messages(:service => 's', :affinity => 'uid') { |messages| nil }
+      subject.subscribe_messages(:service => 's', :affinity => 'uid', :auto_ack => auto_ack) { |messages| nil }
     end
   end
 

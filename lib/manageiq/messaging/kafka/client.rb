@@ -53,12 +53,16 @@ module ManageIQ
 
         attr_accessor :encoding
 
-        def ack(*_args)
+        def ack(ack_ref)
+          @queue_consumer.try(:mark_message_as_processed, ack_ref)
+          @topic_consumer.try(:mark_message_as_processed, ack_ref)
         end
 
         def close
-          @consumer.try(:stop)
-          @consumer = nil
+          @topic_consumer.try(:stop)
+          @topic_consumer = nil
+          @queue_consumer.try(:stop)
+          @queue_consumer = nil
 
           @producer.try(:shutdown)
           @producer = nil

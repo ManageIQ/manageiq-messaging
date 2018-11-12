@@ -28,6 +28,8 @@ module ManageIQ
           # for STOMP we can get message one at a time
           subscribe(queue_name, headers) do |msg|
             begin
+              ack(msg) if auto_ack?(options)
+
               sender = msg.headers['sender']
               message_type = msg.headers['message_type']
               message_body = decode_body(msg.headers, msg.body)
