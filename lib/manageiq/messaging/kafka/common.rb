@@ -16,7 +16,7 @@ module ManageIQ
         def topic_consumer(persist_ref)
           # persist_ref enables consumer to receive messages sent when consumer is temporarily offline
           # it also enables consumers to do load balancing when multiple consumers join the with the same ref.
-          @consumer.try(:stop) unless @persist_ref == persist_ref
+          @topic_consumer.try(:stop) unless @persist_ref == persist_ref
           @persist_ref = persist_ref
           @topic_consumer ||= kafka_client.consumer(:group_id => persist_ref)
         end
@@ -27,8 +27,10 @@ module ManageIQ
         end
 
         trap("TERM") do
-          @consumer.try(:stop)
-          @consumer = nil
+          @topic_consumer.try(:stop)
+          @topic_consumer = nil
+          @queue_consumer.try(:stop)
+          @queue_consumer = nil
         end
 
         def raw_publish(commit, body, options)
@@ -82,7 +84,7 @@ module ManageIQ
             payload = decode_body(message.headers, message.value)
             sender, event_type = parse_event_headers(message.headers)
             logger.info("Event received: topic(#{topic}), event(#{payload_log(payload)}), sender(#{sender}), type(#{event_type})")
-            yield sender, event_type, payload
+            yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, payload, message)
             logger.info("Event processed")
           rescue StandardError => e
             logger.error("Event processing error: #{e.message}")

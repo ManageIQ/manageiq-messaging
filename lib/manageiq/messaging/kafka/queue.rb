@@ -19,12 +19,12 @@ module ManageIQ
 
           consumer = queue_consumer
           consumer.subscribe(topic)
-          consumer.each_batch do |batch|
+          consumer.each_batch(:automatically_mark_as_processed => auto_ack?(options)) do |batch|
             logger.info("Batch message received: queue(#{topic})")
             begin
               messages = batch.messages.collect do |message|
                 sender, message_type, _class_name, payload = process_queue_message(topic, message)
-                ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, payload, nil)
+                ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, payload, message)
               end
 
               yield messages

@@ -23,7 +23,7 @@ class ProducerConsumer < Common
       puts "produced 5 messages"
 
       puts "consumer"
-      client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1') do |messages|
+      client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1', :auto_ack => false) do |messages|
         messages.each do |msg|
           do_stuff(msg)
           client.ack(msg.ack_ref)

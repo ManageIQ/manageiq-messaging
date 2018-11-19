@@ -94,6 +94,7 @@ module ManageIQ
       # Expected keys in +options+ are:
       # * :service  (service and affinity are used to determine the queue)
       # * :affinity (optional)
+      # * :auto_ack (default true, if it is false, client.ack method must be explicitly called)
       # Other options are underlying messaging system specific.
       #
       # A callback block is needed to consume the messages:
@@ -107,16 +108,18 @@ module ManageIQ
       #       msg.payload
       #       msg.ack_ref #used to ack the message
       #
-      #       client.ack(msg.ack_ref)
+      #       client.ack(msg.ack_ref) # needed only when options[:auto_ack] is false
       #       # process the message
       #     end
       #   end
       #
-      # Some messaging systems require the subscriber to ack each message in the
+      # With the auto_ack option default to true, the message will be automatically
+      # acked immediately after the delivery.
+      # Some messaging systems allow the subscriber to ack each message in the
       # callback block. The code in the block can decide when to ack according
       # to whether a message can be retried. Ack the message in the beginning of
       # processing if the message is not re-triable; otherwise ack it after the
-      # message is done. Any un-acked message will be redelivered to next subscriber
+      # message is proccessed. Any un-acked message will be redelivered to next subscriber
       # AFTER the current subscriber disconnects normally or abnormally (e.g. crashed).
       #
       # To ack a message call +ack+(+msg.ack_ref+)
@@ -131,6 +134,7 @@ module ManageIQ
       # Expected keys in +options+ are:
       # * :service  (service and affinity are used to determine the queue)
       # * :affinity (optional)
+      # * :auto_ack (default true, if it is false, client.ack method must be explicitly called)
       # Other options are underlying messaging system specific.
       #
       # This subscriber consumes messages sent through +publish_message+ with required
@@ -146,7 +150,7 @@ module ManageIQ
       #       }
       #     )
       #
-      # Background job assumes each job is not re-triable. It will ack as soon as a request
+      # Background job assumes each job is not re-triable. It is auto-acked as soon as a request
       # is received
       def subscribe_background_job(options)
         assert_options(options, [:service])
@@ -179,10 +183,28 @@ module ManageIQ
       #
       # A callback block is needed to consume the topic:
       #
-      #   client.subcribe_topic(:service => 'provider_events') do |sender, event, payload|
-      #     # sender, event, and payload are from publish_topic
+      #   client.subcribe_topic(:service => 'provider_events') do |msg|
+      #     # msg is a type of ManageIQ::Messaging::ReceivedMessage
+      #     # attributes in msg
+      #     msg.sender
+      #     msg.message
+      #     msg.payload
+      #     msg.ack_ref #used to ack the message
+      #
+      #     client.ack(msg.ack_ref) # needed only when options[:auto_ack] is false
+      #     # process the message
       #   end
       #
+      # With the auto_ack option default to true, the message will be automatically
+      # acked immediately after the delivery.
+      # Some messaging systems allow the subscriber to ack each message in the
+      # callback block. The code in the block can decide when to ack according
+      # to whether a message can be retried. Ack the message in the beginning of
+      # processing if the message is not re-triable; otherwise ack it after the
+      # message is proccessed. Any un-acked message will be redelivered to next subscriber
+      # AFTER the current subscriber disconnects normally or abnormally (e.g. crashed).
+      #
+      # To ack a message call +ack+(+msg.ack_ref+)
       def subscribe_topic(options, &block)
         raise "A block is required" unless block_given?
         assert_options(options, [:service])

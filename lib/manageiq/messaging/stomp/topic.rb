@@ -17,13 +17,13 @@ module ManageIQ
 
           subscribe(queue_name, headers) do |event|
             begin
-              ack(event)
+              ack(event) if auto_ack?(options)
 
               sender = event.headers['sender']
               event_type = event.headers['event_type']
               event_body = decode_body(event.headers, event.body)
               logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
-              yield sender, event_type, event_body
+              yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, event_body, event)
               logger.info("Event processed")
             rescue => e
               logger.error("Event processing error: #{e.message}")
