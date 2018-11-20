@@ -1,2 +1,7 @@
 = 0.1.0 - 4-Oct-2018
 * Initial release
+
+= 0.1.1 - 20-Nov-2018
+* By default upon receiving a message or an event, it is automatically acknowledged. But
+  the subscriber can decide to turn off the auto ack feature and ack it in the callback block.
+
