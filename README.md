@@ -80,7 +80,7 @@ This is the one-to-one publish/subscribe pattern. Multiple subscribers can subsc
     }
   )
 
-  client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1') do |messages|
+  client.subscribe_messages(:service => 'ems_operation', :affinity => 'ems_amazon1', :auto_ack => false) do |messages|
     messages.each do |msg|
       # do stuff with msg.message and msg.payload
       client.ack(msg.ack_ref)
@@ -149,8 +149,8 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
       :timestamp => '1501091391'
     })
 
-  client.subscribe_topic(:service => 'provider_events', :persist_ref => 'automate_1') do |sender, event, payload|
-    # do stuff with event and payload. sender may be nil if not set by the publisher
+  client.subscribe_topic(:service => 'provider_events', :persist_ref => 'automate_1') do |msg|
+    # do stuff with msg.sender, msg.message, and msg.payload. sender may be nil if not set by the publisher
   end
 ```
 

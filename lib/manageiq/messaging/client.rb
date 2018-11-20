@@ -183,7 +183,7 @@ module ManageIQ
       #
       # A callback block is needed to consume the topic:
       #
-      #   client.subcribe_topic(:service => 'provider_events') do |msg|
+      #   client.subcribe_topic(:service => 'provider_events', :auto_ack => false) do |msg|
       #     # msg is a type of ManageIQ::Messaging::ReceivedMessage
       #     # attributes in msg
       #     msg.sender
