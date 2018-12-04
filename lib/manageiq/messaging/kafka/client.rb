@@ -27,6 +27,9 @@ module ManageIQ
       # Kafka specific +subscribe_topic+ options:
       # * :persist_ref (Used as Kafka group_id)
       #
+      # Kafka specific +subscribe_messages+ options:
+      # * :max_bytes (Max batch size to read, default is 10Mb)
+      #
       # Without +:persist_ref+ every topic subscriber receives a copy of each message
       # only when they are active. If multiple topic subscribers join with the same
       # +:persist_ref+, each message is consumed by only one of the subscribers. This

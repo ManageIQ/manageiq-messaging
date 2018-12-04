@@ -131,6 +131,14 @@ describe ManageIQ::Messaging::Kafka::Client do
 
       subject.subscribe_messages(:service => 's', :affinity => 'uid', :auto_ack => auto_ack) { |messages| nil }
     end
+
+    it 'passes max_bytes to each_batch' do
+      expect(raw_client).to receive(:consumer).with(:group_id => described_class::GROUP_FOR_QUEUE_MESSAGES).and_return(consumer)
+      expect(consumer).to receive(:subscribe).with('s.uid')
+      expect(consumer).to receive(:each_batch).with(:automatically_mark_as_processed => auto_ack, :max_bytes => 500000)
+
+      subject.subscribe_messages(:service => 's', :affinity => 'uid', :auto_ack => auto_ack, :max_bytes => 500000) { |messages| nil }
+    end
   end
 
   describe '#publish_messages' do
