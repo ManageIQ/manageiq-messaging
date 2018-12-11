@@ -5,3 +5,5 @@
 * By default upon receiving a message or an event, it is automatically acknowledged. But
   the subscriber can decide to turn off the auto ack feature and ack it in the callback block.
 
+= 0.1.2 - 11-Dec-2018
+* Allow to set max_bytes to each_batch when subscribe to a Kafka topic.
