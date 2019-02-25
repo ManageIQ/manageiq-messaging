@@ -21,7 +21,7 @@ module ManageIQ
           batch_options[:automatically_mark_as_processed] = auto_ack?(options)
           batch_options[:max_bytes] = options[:max_bytes] if options.key?(:max_bytes)
 
-          consumer = queue_consumer
+          consumer = queue_consumer(topic)
           consumer.subscribe(topic)
           consumer.each_batch(batch_options) do |batch|
             logger.info("Batch message received: queue(#{topic})")

@@ -5,7 +5,7 @@ module ManageIQ
         require 'manageiq/messaging/common'
         include ManageIQ::Messaging::Common
 
-        GROUP_FOR_QUEUE_MESSAGES = 'manageiq_messaging_queue_group'.freeze
+        GROUP_FOR_QUEUE_MESSAGES = 'manageiq_messaging_queue_group_'.freeze
 
         private
 
@@ -21,9 +21,11 @@ module ManageIQ
           @topic_consumer ||= kafka_client.consumer(:group_id => persist_ref)
         end
 
-        def queue_consumer
+        def queue_consumer(topic)
           # all queue consumers join the same group so that each message can be processed by one and only one consumer
-          @queue_consumer ||= kafka_client.consumer(:group_id => GROUP_FOR_QUEUE_MESSAGES)
+          @queue_consumer.try(:stop) unless @queue_topic == topic
+          @queue_topic = topic
+          @queue_consumer ||= kafka_client.consumer(:group_id => GROUP_FOR_QUEUE_MESSAGES + topic)
         end
 
         trap("TERM") do
