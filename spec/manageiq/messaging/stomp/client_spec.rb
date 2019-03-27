@@ -54,7 +54,16 @@ describe ManageIQ::Messaging::Stomp::Client do
           hash_including(:"subscription-type" => 'MULTICAST', :ack => 'client', :"durable-subscription-name" => 'ref')).and_yield(raw_message)
         expect(subject).not_to receive(:ack)
 
-        subject.subscribe_topic(:service => 's', :persist_ref => 'ref', :auto_ack => auto_ack) { |message| nil}
+        subject.subscribe_topic(:service => 's', :persist_ref => 'ref', :auto_ack => auto_ack) { |message| nil }
+      end
+
+      it 'acks the message on demand' do
+        expect(raw_client).to receive(:subscribe).with(
+          'topic/s',
+          hash_including(:"subscription-type" => 'MULTICAST', :ack => 'client', :"durable-subscription-name" => 'ref')).and_yield(raw_message)
+        expect(subject).to receive(:ack).with(raw_message)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'ref', :auto_ack => auto_ack) { |message| message.ack }
       end
     end
 

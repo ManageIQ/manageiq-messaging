@@ -106,9 +106,9 @@ module ManageIQ
       #       msg.sender
       #       msg.message
       #       msg.payload
-      #       msg.ack_ref #used to ack the message
+      #       msg.ack_ref
       #
-      #       client.ack(msg.ack_ref) # needed only when options[:auto_ack] is false
+      #       msg.ack # needed only when options[:auto_ack] is false
       #       # process the message
       #     end
       #   end
@@ -122,7 +122,7 @@ module ManageIQ
       # message is proccessed. Any un-acked message will be redelivered to next subscriber
       # AFTER the current subscriber disconnects normally or abnormally (e.g. crashed).
       #
-      # To ack a message call +ack+(+msg.ack_ref+)
+      # To ack a message call +msg.ack+
       def subscribe_messages(options, &block)
         raise "A block is required" unless block_given?
         assert_options(options, [:service])
@@ -189,9 +189,9 @@ module ManageIQ
       #     msg.sender
       #     msg.message
       #     msg.payload
-      #     msg.ack_ref #used to ack the message
+      #     msg.ack_ref
       #
-      #     client.ack(msg.ack_ref) # needed only when options[:auto_ack] is false
+      #     msg.ack # needed only when options[:auto_ack] is false
       #     # process the message
       #   end
       #
@@ -204,7 +204,7 @@ module ManageIQ
       # message is proccessed. Any un-acked message will be redelivered to next subscriber
       # AFTER the current subscriber disconnects normally or abnormally (e.g. crashed).
       #
-      # To ack a message call +ack+(+msg.ack_ref+)
+      # To ack a message call +msg.ack+
       def subscribe_topic(options, &block)
         raise "A block is required" unless block_given?
         assert_options(options, [:service])

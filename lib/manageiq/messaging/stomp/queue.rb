@@ -35,7 +35,7 @@ module ManageIQ
               message_body = decode_body(msg.headers, msg.body)
               logger.info("Message received: queue(#{queue_name}), msg(#{payload_log(message_body)}), headers(#{msg.headers})")
 
-              result = yield [ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, message_body, msg)]
+              result = yield [ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, message_body, msg, self)]
               logger.info("Message processed")
 
               correlation_ref = msg.headers['correlation_id']
