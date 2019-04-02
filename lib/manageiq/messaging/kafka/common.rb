@@ -21,11 +21,15 @@ module ManageIQ
           @topic_consumer ||= kafka_client.consumer(:group_id => persist_ref)
         end
 
-        def queue_consumer(topic)
+        def queue_consumer(topic, session_timeout = nil)
           # all queue consumers join the same group so that each message can be processed by one and only one consumer
           @queue_consumer.try(:stop) unless @queue_topic == topic
           @queue_topic = topic
-          @queue_consumer ||= kafka_client.consumer(:group_id => GROUP_FOR_QUEUE_MESSAGES + topic)
+
+          consumer_opts = {:group_id => GROUP_FOR_QUEUE_MESSAGES + topic}
+          consumer_opts[:session_timeout] = session_timeout if session_timeout.present?
+
+          @queue_consumer ||= kafka_client.consumer(consumer_opts)
         end
 
         trap("TERM") do
