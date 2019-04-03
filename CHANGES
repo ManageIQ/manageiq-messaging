@@ -7,3 +7,7 @@
 
 = 0.1.2 - 11-Dec-2018
 * Allow to set max_bytes to each_batch when subscribe to a Kafka topic.
+
+= 0.1.4 - 3-Apr-2019
+* Add an #ack method to a ReceivedMessage to simplify manual acknowledgements
+* Allow caller to provide a session_timeout to kafka consumers, default of 30sec
