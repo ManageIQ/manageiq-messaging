@@ -13,19 +13,27 @@ module ManageIQ
           @producer ||= kafka_client.producer
         end
 
-        def topic_consumer(persist_ref)
+        def topic_consumer(persist_ref, session_timeout = nil)
           # persist_ref enables consumer to receive messages sent when consumer is temporarily offline
           # it also enables consumers to do load balancing when multiple consumers join the with the same ref.
           @topic_consumer.try(:stop) unless @persist_ref == persist_ref
           @persist_ref = persist_ref
-          @topic_consumer ||= kafka_client.consumer(:group_id => persist_ref)
+
+          consumer_opts = {:group_id => persist_ref}
+          consumer_opts[:session_timeout] = session_timeout if session_timeout.present?
+
+          @topic_consumer ||= kafka_client.consumer(consumer_opts)
         end
 
-        def queue_consumer(topic)
+        def queue_consumer(topic, session_timeout = nil)
           # all queue consumers join the same group so that each message can be processed by one and only one consumer
           @queue_consumer.try(:stop) unless @queue_topic == topic
           @queue_topic = topic
-          @queue_consumer ||= kafka_client.consumer(:group_id => GROUP_FOR_QUEUE_MESSAGES + topic)
+
+          consumer_opts = {:group_id => GROUP_FOR_QUEUE_MESSAGES + topic}
+          consumer_opts[:session_timeout] = session_timeout if session_timeout.present?
+
+          @queue_consumer ||= kafka_client.consumer(consumer_opts)
         end
 
         trap("TERM") do
