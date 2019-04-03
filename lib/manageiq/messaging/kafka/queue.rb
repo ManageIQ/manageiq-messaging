@@ -16,7 +16,7 @@ module ManageIQ
 
         def subscribe_messages_impl(options)
           topic = address(options)
-          session_timeout = options[:session_timeout] if options.key?(:session_timeout)
+          session_timeout = options[:session_timeout]
 
           batch_options = {}
           batch_options[:automatically_mark_as_processed] = auto_ack?(options)

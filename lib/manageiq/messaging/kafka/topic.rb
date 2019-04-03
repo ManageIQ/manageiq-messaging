@@ -11,7 +11,7 @@ module ManageIQ
         def subscribe_topic_impl(options, &block)
           topic = address(options)
           persist_ref     = options[:persist_ref]
-          session_timeout = options[:session_timeout] if options.key?(:session_timeout)
+          session_timeout = options[:session_timeout]
 
           if persist_ref
             consumer = topic_consumer(persist_ref, session_timeout)
