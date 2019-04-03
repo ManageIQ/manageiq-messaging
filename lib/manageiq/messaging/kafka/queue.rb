@@ -28,7 +28,7 @@ module ManageIQ
             begin
               messages = batch.messages.collect do |message|
                 sender, message_type, _class_name, payload = process_queue_message(topic, message)
-                ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, payload, message)
+                ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, payload, message, self)
               end
 
               yield messages

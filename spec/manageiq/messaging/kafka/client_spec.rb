@@ -50,22 +50,47 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#subscribe_topic' do
     let(:consumer) { double(:topic_consumer) }
-    let(:auto_ack) { false }
     let(:raw_message) { double(:raw_message, :headers => {'sender' => 'x', 'event_type' => 'y'}, :value => 'v') }
 
-    it 'listens to the topic with persist_ref' do
-      expect(raw_client).to receive(:consumer).with(:group_id => 'pid').and_return(consumer)
-      expect(consumer).to receive(:subscribe).with('s', :start_from_beginning => false)
-      expect(consumer).to receive(:each_message).with(:automatically_mark_as_processed => auto_ack).and_yield(raw_message)
-      expect(consumer).to receive(:mark_message_as_processed)
+    context 'no auto_ack' do
+      let(:auto_ack) { false }
 
-      subject.subscribe_topic(:service => 's', :persist_ref => 'pid', :auto_ack => auto_ack) { |message| subject.ack(message.ack_ref) }
+      it 'listens to the topic with persist_ref' do
+        expect(raw_client).to receive(:consumer).with(:group_id => 'pid').and_return(consumer)
+        expect(consumer).to receive(:subscribe).with('s', :start_from_beginning => false)
+        expect(consumer).to receive(:each_message).with(:automatically_mark_as_processed => auto_ack).and_yield(raw_message)
+        expect(consumer).not_to receive(:mark_message_as_processed)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'pid', :auto_ack => auto_ack) { |message| nil }
+      end
+
+      it 'listens to the topic without persist_ref' do
+        expect(raw_client).to receive(:each_message).with(:topic => 's', :start_from_beginning => false)
+
+        subject.subscribe_topic(:service => 's') { |message| nil }
+      end
+
+      it 'acks the message on demand' do
+        expect(raw_client).to receive(:consumer).with(:group_id => 'pid').and_return(consumer)
+        expect(consumer).to receive(:subscribe).with('s', :start_from_beginning => false)
+        expect(consumer).to receive(:each_message).with(:automatically_mark_as_processed => auto_ack).and_yield(raw_message)
+        expect(consumer).to receive(:mark_message_as_processed)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'pid', :auto_ack => auto_ack) { |message| message.ack }
+      end
     end
 
-    it 'listens to the topic without persist_ref' do
-      expect(raw_client).to receive(:each_message).with(:topic => 's', :start_from_beginning => false)
+    context 'auto_ack' do
+      let(:auto_ack) { true }
 
-      subject.subscribe_topic(:service => 's') { |_a, _b, _c| nil }
+      it 'acks the message automatically' do
+        expect(raw_client).to receive(:consumer).with(:group_id => 'pid').and_return(consumer)
+        expect(consumer).to receive(:subscribe).with('s', :start_from_beginning => false)
+        expect(consumer).to receive(:each_message).with(:automatically_mark_as_processed => auto_ack).and_yield(raw_message)
+        expect(consumer).not_to receive(:mark_message_as_processed)
+
+        subject.subscribe_topic(:service => 's', :persist_ref => 'pid', :auto_ack => auto_ack) { |message| nil }
+      end
     end
   end
 
