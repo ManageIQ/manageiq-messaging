@@ -26,6 +26,7 @@ module ManageIQ
       #
       # Kafka specific +subscribe_topic+ options:
       # * :persist_ref (Used as Kafka group_id)
+      # * :session_timeout (Max time in seconds allowed to process a message, default is 30)
       #
       # Kafka specific +subscribe_messages+ options:
       # * :max_bytes (Max batch size to read, default is 10Mb)
