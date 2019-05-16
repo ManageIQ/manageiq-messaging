@@ -21,6 +21,7 @@ module ManageIQ
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
           headers[:priority]           = options[:priority] if options[:priority]
           headers[:_AMQ_GROUP_ID]      = options[:group_name] if options[:group_name]
+          headers[:encoding]           = options[:encoding] if options[:encoding]
 
           [address, headers]
         end
