@@ -53,6 +53,7 @@ module ManageIQ
           body, kafka_opts = for_publish(options)
           kafka_opts[:headers][:message_type] = options[:message] if options[:message]
           kafka_opts[:headers][:class_name] = options[:class_name] if options[:class_name]
+          kafka_opts[:headers][:encoding] = options[:encoding] if options[:encoding]
 
           [body, kafka_opts]
         end
