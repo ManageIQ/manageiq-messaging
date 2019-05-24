@@ -58,6 +58,7 @@ module ManageIQ
       # * :message    (e.g. method name or message type)
       # * :payload    (message body, a string or an user object that can be serialized)
       # * :sender     (optional, identify the sender)
+      # * :headers    (optional, additional headers to add to the message)
       # Other options are underlying messaging system specific.
       #
       # Optionally a call back block can be provided to wait on the consumer to send
@@ -164,6 +165,7 @@ module ManageIQ
       # * :event   (event name)
       # * :payload (message body, a string or an user object that can be serialized)
       # * :sender  (optional, identify the sender)
+      # * :headers (optional, additional headers to add to the message)
       # Other options are underlying messaging system specific.
       #
       def publish_topic(options)

@@ -65,8 +65,9 @@ module ManageIQ
         end
 
         def for_publish(options)
-          kafka_opts = {:topic => address(options), :headers => {}}
-          kafka_opts[:partition_key] = options[:group_name] if options[:group_name]
+          kafka_opts = {:topic => address(options)}
+          kafka_opts[:partition_key]    = options[:group_name] if options[:group_name]
+          kafka_opts[:headers]          = options[:headers] || {}
           kafka_opts[:headers][:sender] = options[:sender] if options[:sender]
 
           body = options[:payload] || ''

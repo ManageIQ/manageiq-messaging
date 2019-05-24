@@ -17,6 +17,8 @@ module ManageIQ
           address = "queue/#{options[:service]}.#{affinity}"
 
           headers = {:"destination-type" => 'ANYCAST', :persistent => true}
+          headers.merge!(options[:headers]) if options.key?(:headers)
+
           headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
           headers[:priority]           = options[:priority] if options[:priority]
@@ -38,6 +40,8 @@ module ManageIQ
           address = "topic/#{options[:service]}"
 
           headers = {:"destination-type" => 'MULTICAST', :persistent => true}
+          headers.merge!(options[:headers]) if options.key?(:headers)
+
           headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
           headers[:priority]           = options[:priority] if options[:priority]
