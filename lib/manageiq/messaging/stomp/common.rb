@@ -17,7 +17,7 @@ module ManageIQ
           address = "queue/#{options[:service]}.#{affinity}"
 
           headers = {:"destination-type" => 'ANYCAST', :persistent => true}
-          headers.merge!(options[:headers]) if options.key?(:headers)
+          headers.merge!(options[:headers].except(*internal_header_keys)) if options.key?(:headers)
 
           headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
@@ -40,7 +40,7 @@ module ManageIQ
           address = "topic/#{options[:service]}"
 
           headers = {:"destination-type" => 'MULTICAST', :persistent => true}
-          headers.merge!(options[:headers]) if options.key?(:headers)
+          headers.merge!(options[:headers].except(*internal_header_keys)) if options.key?(:headers)
 
           headers[:expires]            = options[:expires_on].to_i * 1000 if options[:expires_on]
           headers[:AMQ_SCHEDULED_TIME] = options[:deliver_on].to_i * 1000 if options[:deliver_on]
@@ -65,6 +65,10 @@ module ManageIQ
           }
           address, response_headers = queue_for_publish(response_options)
           raw_publish(address, result || '', response_headers.merge(:correlation_id => correlation_ref))
+        end
+
+        def internal_header_keys
+          [:"destination-type", :persistent, :expires, :AMQ_SCHEDULED_TIME, :priority, :_AMQ_GROUP_ID]
         end
 
         def receive_response(service, correlation_ref)

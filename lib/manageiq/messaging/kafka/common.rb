@@ -53,6 +53,7 @@ module ManageIQ
           body, kafka_opts = for_publish(options)
           kafka_opts[:headers][:message_type] = options[:message] if options[:message]
           kafka_opts[:headers][:class_name] = options[:class_name] if options[:class_name]
+          kafka_opts[:headers].merge!(options[:headers].except(*message_header_keys)) if options.key?(:headers)
 
           [body, kafka_opts]
         end
@@ -60,6 +61,7 @@ module ManageIQ
         def topic_for_publish(options)
           body, kafka_opts = for_publish(options)
           kafka_opts[:headers][:event_type] = options[:event] if options[:event]
+          kafka_opts[:headers].merge!(options[:headers].except(*event_header_keys)) if options.key?(:headers)
 
           [body, kafka_opts]
         end
@@ -67,7 +69,7 @@ module ManageIQ
         def for_publish(options)
           kafka_opts = {:topic => address(options)}
           kafka_opts[:partition_key]    = options[:group_name] if options[:group_name]
-          kafka_opts[:headers]          = options[:headers] || {}
+          kafka_opts[:headers]          = {}
           kafka_opts[:headers][:sender] = options[:sender] if options[:sender]
 
           body = options[:payload] || ''
@@ -86,16 +88,20 @@ module ManageIQ
         def process_queue_message(queue, message)
           payload = decode_body(message.headers, message.value)
           sender, message_type, class_name = parse_message_headers(message.headers)
+          client_headers = message.headers.except(*message_header_keys)
+
           logger.info("Message received: queue(#{queue}), message(#{payload_log(payload)}), sender(#{sender}), type(#{message_type})")
-          [sender, message_type, class_name, payload, message.headers]
+          [sender, message_type, class_name, payload, client_headers]
         end
 
         def process_topic_message(topic, message)
           begin
             payload = decode_body(message.headers, message.value)
             sender, event_type = parse_event_headers(message.headers)
+            client_headers = message.headers.except(*event_header_keys)
+
             logger.info("Event received: topic(#{topic}), event(#{payload_log(payload)}), sender(#{sender}), type(#{event_type})")
-            yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, payload, message.headers, message, self)
+            yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, payload, client_headers, message, self)
             logger.info("Event processed")
           rescue StandardError => e
             logger.error("Event processing error: #{e.message}")
@@ -104,9 +110,17 @@ module ManageIQ
           end
         end
 
+        def message_header_keys
+          ['sender', 'message_type', 'class_name']
+        end
+
         def parse_message_headers(headers)
           return [nil, nil, nil] unless headers.kind_of?(Hash)
-          headers.values_at('sender', 'message_type', 'class_name')
+          headers.values_at(*message_header_keys)
+        end
+
+        def event_header_keys
+          ['sender', 'event_type']
         end
 
         def parse_event_headers(headers)
