@@ -1,10 +1,10 @@
 module ManageIQ
   module Messaging
     class ReceivedMessage
-      attr_accessor :sender, :message, :payload, :ack_ref, :client
+      attr_accessor :sender, :message, :payload, :headers, :ack_ref, :client
 
-      def initialize(sender, message, payload, ack_ref, client)
-        @sender, @message, @payload, @ack_ref, @client = sender, message, payload, ack_ref, client
+      def initialize(sender, message, payload, headers, ack_ref, client)
+        @sender, @message, @payload, @headers, @ack_ref, @client = sender, message, payload, headers, ack_ref, client
       end
 
       def ack

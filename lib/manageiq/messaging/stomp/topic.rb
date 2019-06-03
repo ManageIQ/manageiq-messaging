@@ -23,7 +23,7 @@ module ManageIQ
               event_type = event.headers['event_type']
               event_body = decode_body(event.headers, event.body)
               logger.info("Event received: queue(#{queue_name}), event(#{event_body}), headers(#{event.headers})")
-              yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, event_body, event, self)
+              yield ManageIQ::Messaging::ReceivedMessage.new(sender, event_type, event_body, event.headers, event, self)
               logger.info("Event processed")
             rescue => e
               logger.error("Event processing error: #{e.message}")
