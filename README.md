@@ -170,7 +170,7 @@ If you want you can add in your own headers to the send message
   )
 
   client.subscribe_topic(:service => 'provider_events', :persist_ref => 'automate_1') do |msg|
-    puts "Received event #{msg.message} with request-id: #{msg.headers[:request_id]}"
+    puts "Received event #{msg.message} with request-id: #{msg.headers['request_id']}"
   end
 ```
 
