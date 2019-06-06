@@ -11,3 +11,6 @@
 = 0.1.4 - 3-Apr-2019
 * Add an #ack method to a ReceivedMessage to simplify manual acknowledgements
 * Allow caller to provide a session_timeout to kafka consumers, default of 30sec
+
+= 0.1.5 - 6-Jun-2019
+* Allow caller to provide extra headers to the message
