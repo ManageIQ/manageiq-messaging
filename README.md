@@ -156,6 +156,24 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
 
 By default, events are delivered to live subscribers only. Some messaging systems support persistence with options.
 
+### Add your own headers to a message (Queue or Topic)
+
+If you want you can add in your own headers to the send message
+
+```
+  client.publish_topic(
+    :service => 'provider_events',
+    :event   => 'powered_on',
+    :headers => {:request_id => "12345"},
+    :payload => {:ems_ref => 'uid987'}
+
+  )
+
+  client.subscribe_topic(:service => 'provider_events', :persist_ref => 'automate_1') do |msg|
+    puts "Received event #{msg.message} with request-id: #{msg.headers['request_id']}"
+  end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

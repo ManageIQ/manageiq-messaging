@@ -24,10 +24,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-kafka', '~> 0.7.0'
   spec.add_dependency 'stomp', '~> 1.4.4'
 
-  spec.add_development_dependency "bundler", "~> 1.13"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-performance"
   spec.add_development_dependency "simplecov"
 end

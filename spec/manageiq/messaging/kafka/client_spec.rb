@@ -40,11 +40,19 @@ describe ManageIQ::Messaging::Kafka::Client do
         hash_including(
           :topic         => 's',
           :partition_key => 'a',
-          :headers       => hash_including(:event_type => 'e', :encoding => 'yaml')
+          :headers       => hash_including(
+            :event_type => 'e', :encoding => 'yaml', :identity => "1234"
+          )
         )
       )
 
-      subject.publish_topic(:service => 's', :event => 'e', :group_name => 'a', :payload => [1, 2, 3])
+      subject.publish_topic(
+        :service => 's',
+        :event => 'e',
+        :group_name => 'a',
+        :headers => {:identity => "1234"},
+        :payload => [1, 2, 3]
+      )
     end
   end
 
@@ -99,13 +107,16 @@ describe ManageIQ::Messaging::Kafka::Client do
       expect(producer).to receive(:deliver_messages)
       expect(producer).to receive(:produce).with(
         'p',
-        hash_including(:topic => 's.uid', :headers => {:message_type => 'm'})
+        hash_including(
+          :topic => 's.uid', :headers => {:message_type => 'm', :identity => "1234"}
+        )
       )
 
       subject.publish_message(
         :service    => 's',
         :message    => 'm',
         :affinity   => 'uid',
+        :headers    => {:identity => "1234"},
         :payload    => 'p')
     end
 
