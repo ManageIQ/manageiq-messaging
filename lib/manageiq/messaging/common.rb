@@ -26,6 +26,10 @@ module ManageIQ
         else
           raw_body
         end
+      rescue => e # JSON or YAML parsing error
+        logger.error("Error decoding message body: #{e.message}")
+        logger.error(e.backtrace.join("\n"))
+        raw_body
       end
 
       def payload_log(payload)
