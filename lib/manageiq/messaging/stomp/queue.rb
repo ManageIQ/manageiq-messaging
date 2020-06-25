@@ -52,6 +52,7 @@ module ManageIQ
             rescue => e
               logger.error("Message processing error: #{e.message}")
               logger.error(e.backtrace.join("\n"))
+              raise
             end
           end
         end

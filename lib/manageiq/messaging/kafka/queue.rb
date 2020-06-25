@@ -36,6 +36,7 @@ module ManageIQ
             rescue StandardError => e
               logger.error("Event processing error: #{e.message}")
               logger.error(e.backtrace.join("\n"))
+              raise
             end
             logger.info("Batch message processed")
           end
