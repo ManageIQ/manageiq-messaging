@@ -20,8 +20,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'activesupport', '>= 4.2.2'
-  spec.add_dependency 'ruby-kafka', '~> 0.7.0'
+  spec.add_dependency 'activesupport', '~> 5.2.4.3'
+  spec.add_dependency 'ruby-kafka', '~> 1.0'
   spec.add_dependency 'stomp', '~> 1.4.4'
 
   spec.add_development_dependency "bundler"
