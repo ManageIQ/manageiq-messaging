@@ -2,6 +2,8 @@ module ManageIQ
   module Messaging
     module Kafka
       module Queue
+        GROUP_FOR_QUEUE_MESSAGES = 'manageiq_messaging_queue_group_'.freeze
+
         private
 
         def publish_message_impl(options)
@@ -10,35 +12,18 @@ module ManageIQ
         end
 
         def publish_messages_impl(messages)
-          messages.each { |msg_options| raw_publish(false, *queue_for_publish(msg_options)) }
-          producer.deliver_messages
+          handles = messages.collect { |msg_options| raw_publish(false, *queue_for_publish(msg_options)) }
+          handles.each(&:wait)
         end
 
-        def subscribe_messages_impl(options)
+        def subscribe_messages_impl(options, &block)
           topic = address(options)
-          session_timeout = options[:session_timeout]
+          options[:persist_ref] = GROUP_FOR_QUEUE_MESSAGES + topic
 
-          batch_options = {}
-          batch_options[:automatically_mark_as_processed] = auto_ack?(options)
-          batch_options[:max_bytes] = options[:max_bytes] if options.key?(:max_bytes)
-
-          consumer = queue_consumer(topic, session_timeout)
-          consumer.subscribe(topic)
-          consumer.each_batch(batch_options) do |batch|
-            logger.info("Batch message received: queue(#{topic})")
-            begin
-              messages = batch.messages.collect do |message|
-                sender, message_type, _class_name, payload = process_queue_message(topic, message)
-                ManageIQ::Messaging::ReceivedMessage.new(sender, message_type, payload, headers, message, self)
-              end
-
-              yield messages
-            rescue StandardError => e
-              logger.error("Event processing error: #{e.message}")
-              logger.error(e.backtrace.join("\n"))
-              raise
-            end
-            logger.info("Batch message processed")
+          queue_consumer = consumer(true, options)
+          queue_consumer.subscribe(topic)
+          queue_consumer.each do |message|
+              process_queue_message(queue_consumer, topic, message, &block)
           end
         end
       end

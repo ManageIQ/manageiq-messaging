@@ -18,7 +18,7 @@ module ManageIQ
 
       def decode_body(headers, raw_body)
         return raw_body unless headers.kind_of?(Hash)
-        case headers["encoding"]
+        case headers["encoding"] || headers[:encoding]
         when "json"
           JSON.parse(raw_body)
         when "yaml"
