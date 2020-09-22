@@ -28,7 +28,7 @@ Or install it yourself as:
 
 ### Initialize a client
 
-It is not recommended to directly create an actual client through `new` operation. Follow the example by specifying a protocol. This allows to easily switch the underlying messaging system from one type to another. Currently `:Stomp` and `:Kafka` are implemented.
+It is not recommended to directly create an actual client through `new` operation. Follow the example by specifying a protocol. This allows to easily switch the underlying messaging system from one type to another. Currently `:Stomp`, `:Kafka`, and `:Rdkafka` are implemented. `:Rdkafka` is the same as Kafka, but relies on librdkafka C++ library.
 
 ```
   ManageIQ::Messaging.logger = Logger.new(STDOUT)

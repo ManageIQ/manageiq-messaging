@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '~> 5.2.4.3'
   spec.add_dependency 'ruby-kafka', '~> 1.0'
+  spec.add_dependency 'rdkafka', '~> 0.8'
   spec.add_dependency 'stomp', '~> 1.4.4'
 
   spec.add_development_dependency "bundler"

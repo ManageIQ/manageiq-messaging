@@ -8,6 +8,7 @@ module ManageIQ
   module Messaging
     autoload :Stomp, 'manageiq/messaging/stomp'
     autoload :Kafka, 'manageiq/messaging/kafka'
+    autoload :Rdkafka, 'manageiq/messaging/rdkafka'
 
     class << self
       attr_writer :logger

@@ -1,6 +1,6 @@
 module ManageIQ
   module Messaging
-    module Kafka
+    module Rdkafka
       # Messaging client implementation with Kafka being the underlying supporting system.
       # Do not directly instantiate an instance from this class. Use
       # +ManageIQ::Messaging::Client.open+ method.
@@ -10,16 +10,6 @@ module ManageIQ
       # * :hosts (Array of Kafka cluster hosts, or)
       # * :host (Single host name)
       # * :port (host port number)
-      # * :ssl_ca_cert (security options)
-      # * :ssl_client_cert
-      # * :ssl_client_cert_key
-      # * :sasl_gssapi_principal
-      # * :sasl_gssapi_keytab
-      # * :sasl_plain_username
-      # * :sasl_plain_password
-      # * :sasl_scram_username
-      # * :sasl_scram_password
-      # * :sasl_scram_mechanism
       #
       # Kafka specific +publish_message+ options:
       # * :group_name (Used as Kafka partition_key)
@@ -42,43 +32,38 @@ module ManageIQ
       #
       # +subscribe_background_job+ is currently not implemented.
       class Client < ManageIQ::Messaging::Client
-        require 'kafka'
-        require 'manageiq/messaging/kafka/common'
-        require 'manageiq/messaging/kafka/queue'
-        require 'manageiq/messaging/kafka/background_job'
-        require 'manageiq/messaging/kafka/topic'
+        require 'rdkafka'
+        require 'manageiq/messaging/rdkafka/common'
+        require 'manageiq/messaging/rdkafka/queue'
+        require 'manageiq/messaging/rdkafka/background_job'
+        require 'manageiq/messaging/rdkafka/topic'
 
         include Common
         include Queue
         include BackgroundJob
         include Topic
 
-        private *delegate(:subscribe, :unsubscribe, :publish, :to => :kafka_client)
-        delegate :close, :to => :kafka_client
-
         attr_accessor :encoding
 
         def ack(ack_ref)
-          @queue_consumer.try(:mark_message_as_processed, ack_ref)
-          @topic_consumer.try(:mark_message_as_processed, ack_ref)
+          ack_ref.commit
+        rescue Rdkafka::RdkafkaError => e
+          logger.warn("ack failed with error #{e.message}")
+          raise unless e.message =~ /no_offset/
         end
 
         def close
-          @topic_consumer.try(:stop)
-          @topic_consumer = nil
-          @queue_consumer.try(:stop)
-          @queue_consumer = nil
-
-          @producer.try(:shutdown)
+          @producer&.close
           @producer = nil
 
-          kafka_client.close
-          @kafka_client = nil
+          @consumer&.close
+          @consumer = nil
         end
 
         # list all topics
         def topics
-          kafka_client.topics
+          native_kafka = producer.instance_variable_get(:@native_kafka)
+          Rdkafka::Metadata.new(native_kafka).topics.collect { |topic| topic[:topic_name] }
         end
 
         private
@@ -92,12 +77,11 @@ module ManageIQ
           @encoding = options[:encoding] || 'yaml'
           require "json" if @encoding == "json"
 
-          connection_opts = {}
-          connection_opts[:client_id] = options[:client_ref] if options[:client_ref]
+          connection_opts = {:"bootstrap.servers" => hosts.join(',')}
+          connection_opts[:"client.id"] = options[:client_ref] if options[:client_ref]
 
-          connection_opts.merge!(options.slice(:ssl_ca_cert, :ssl_client_cert, :ssl_client_cert_key, :sasl_gssapi_principal, :sasl_gssapi_keytab, :sasl_plain_username, :sasl_plain_password, :sasl_scram_username, :sasl_scram_password, :sasl_scram_mechanism))
-
-          @kafka_client = ::Kafka.new(hosts, connection_opts)
+          ::Rdkafka::Config.logger = logger
+          @kafka_client = ::Rdkafka::Config.new(connection_opts)
         end
       end
     end
