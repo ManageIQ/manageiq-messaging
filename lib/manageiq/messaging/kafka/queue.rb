@@ -2,7 +2,7 @@ module ManageIQ
   module Messaging
     module Kafka
       module Queue
-        GROUP_FOR_QUEUE_MESSAGES = 'manageiq_messaging_queue_group_'.freeze
+        GROUP_FOR_QUEUE_MESSAGES = ENV['QUEUE_MESSAGES_GROUP_PREFIX'].freeze || 'manageiq_messaging_queue_group_'.freeze
 
         private
 
@@ -23,7 +23,7 @@ module ManageIQ
           queue_consumer = consumer(true, options)
           queue_consumer.subscribe(topic)
           queue_consumer.each do |message|
-              process_queue_message(queue_consumer, topic, message, &block)
+            process_queue_message(queue_consumer, topic, message, &block)
           end
         end
       end

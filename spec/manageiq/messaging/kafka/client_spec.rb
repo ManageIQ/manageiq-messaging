@@ -80,7 +80,7 @@ describe ManageIQ::Messaging::Kafka::Client do
 
       it 'listens to the topic without persist_ref' do
         subject.subscribe_topic(:service => 's') { |message| nil }
-        expect(raw_client).to include(:"group.id" => /manageiq_messaging_topic_group_/, :"auto.offset.reset" => 'largest', :"enable.auto.commit" => true)
+        expect(raw_client).to include(:"group.id" => /_\d{10}/, :"auto.offset.reset" => 'largest', :"enable.auto.commit" => true)
       end
 
       it 'acks the message on demand' do

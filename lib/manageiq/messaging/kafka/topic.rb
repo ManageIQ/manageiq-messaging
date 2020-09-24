@@ -1,8 +1,10 @@
+require 'socket'
+
 module ManageIQ
   module Messaging
     module Kafka
       module Topic
-        GROUP_FOR_ADHOC_LISTENERS = 'manageiq_messaging_topic_group_'.freeze
+        GROUP_FOR_ADHOC_LISTENERS = Socket.gethostname.freeze
 
         private
 
@@ -17,7 +19,7 @@ module ManageIQ
           topic_consumer = consumer(false, options)
           topic_consumer.subscribe(topic)
           topic_consumer.each do |message|
-              process_topic_message(topic_consumer, topic, message, &block)
+            process_topic_message(topic_consumer, topic, message, &block)
           end
         end
       end

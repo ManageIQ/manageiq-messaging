@@ -4,9 +4,10 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'manageiq/messaging/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "manageiq-messaging"
-  spec.version       = ManageIQ::Messaging::VERSION
-  spec.authors       = ["ManageIQ Authors"]
+  spec.name                  = "manageiq-messaging"
+  spec.version               = ManageIQ::Messaging::VERSION
+  spec.required_ruby_version = '>= 2.4'
+  spec.authors               = ["ManageIQ Authors"]
 
   spec.summary       = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
   spec.description   = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
