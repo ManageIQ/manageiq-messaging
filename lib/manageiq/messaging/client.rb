@@ -41,16 +41,6 @@ module ManageIQ
         protocol = options[:protocol] || :Stomp
         client = Object.const_get("ManageIQ::Messaging::#{protocol}::Client").new(options)
 
-        prepend_handler("INT") do |old|
-          client.close
-          old.call
-        end
-
-        prepend_handler("TERM") do |old|
-          client.close
-          old.call
-        end
-
         return client unless block_given?
 
         begin
@@ -235,14 +225,6 @@ module ManageIQ
         missing = keys - options.keys
         raise ArgumentError, "options must contain keys #{missing}" unless missing.empty?
       end
-
-      def self.prepend_handler(signal, &handler)
-        previous = Signal.trap(signal) do
-          previous = -> { raise SignalException, signal} unless previous.respond_to?(:call)
-          handler.call(previous)
-        end
-      end
-      private_class_method :prepend_handler
     end
   end
 end
