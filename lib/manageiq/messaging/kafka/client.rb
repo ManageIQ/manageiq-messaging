@@ -11,6 +11,11 @@ module ManageIQ
       # * :host (Single host name)
       # * :port (host port number)
       #
+      # For additional security options, please refer to 
+      # https://github.com/edenhill/librdkafka/wiki/Using-SSL-with-librdkafka and
+      # https://github.com/edenhill/librdkafka/wiki/Using-SASL-with-librdkafka 
+      # 
+      #
       # Kafka specific +publish_message+ options:
       # * :group_name (Used as Kafka partition_key)
       #
