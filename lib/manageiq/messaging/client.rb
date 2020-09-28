@@ -40,6 +40,7 @@ module ManageIQ
       def self.open(options)
         protocol = options[:protocol] || :Stomp
         client = Object.const_get("ManageIQ::Messaging::#{protocol}::Client").new(options)
+
         return client unless block_given?
 
         begin

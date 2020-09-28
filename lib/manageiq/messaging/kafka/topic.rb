@@ -1,7 +1,11 @@
+require 'socket'
+
 module ManageIQ
   module Messaging
     module Kafka
       module Topic
+        GROUP_FOR_ADHOC_LISTENERS = Socket.gethostname.freeze
+
         private
 
         def publish_topic_impl(options)
@@ -10,19 +14,12 @@ module ManageIQ
 
         def subscribe_topic_impl(options, &block)
           topic = address(options)
-          persist_ref     = options[:persist_ref]
-          session_timeout = options[:session_timeout]
 
-          if persist_ref
-            consumer = topic_consumer(persist_ref, session_timeout)
-            consumer.subscribe(topic, :start_from_beginning => false)
-            consumer.each_message(:automatically_mark_as_processed => auto_ack?(options)) do |message|
-              process_topic_message(topic, message, &block)
-            end
-          else
-            kafka_client.each_message(:topic => topic, :start_from_beginning => false) do |message|
-              process_topic_message(topic, message, &block)
-            end
+          options[:persist_ref] = "#{GROUP_FOR_ADHOC_LISTENERS}_#{Time.now.to_i}" unless options[:persist_ref]
+          topic_consumer = consumer(false, options)
+          topic_consumer.subscribe(topic)
+          topic_consumer.each do |message|
+            process_topic_message(topic_consumer, topic, message, &block)
           end
         end
       end
