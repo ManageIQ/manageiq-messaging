@@ -17,3 +17,6 @@
 
 = 0.1.6 - 6-July-2020
 * Rescue message body decoding errors. Re-raise errors raised by users code of processing received messages. 
+
+= 1.0.0 - 28-Sep-2020
+* Switch to use rdkafka client
