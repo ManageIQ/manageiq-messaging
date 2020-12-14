@@ -85,6 +85,11 @@ module ManageIQ
           connection_opts = {:"bootstrap.servers" => hosts.join(',')}
           connection_opts[:"client.id"] = options[:client_ref] if options[:client_ref]
 
+          options_copy = Hash[options]
+          [:port, :host, :hosts, :encoding, :protocol, :client_ref].each { |k| options_copy.delete(k) }
+
+          connection_opts = connection_opts.merge(options_copy)
+
           ::Rdkafka::Config.logger = logger
           @kafka_client = ::Rdkafka::Config.new(connection_opts)
         end
