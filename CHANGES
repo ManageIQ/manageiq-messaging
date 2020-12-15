@@ -20,3 +20,8 @@
 
 = 1.0.0 - 28-Sep-2020
 * Switch to use rdkafka client
+
+= 1.0.1 - 25-Dec-2020
+* Allow all kafka options to be passed
+* remove sudo:false from .travis.yml
+* Use manageiq-style
