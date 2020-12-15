@@ -17,24 +17,26 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#initialize' do
     it 'creates a client connects to a single host' do
-      expect(::Rdkafka::Config).to receive(:new).with(:"bootstrap.servers"=>"localhost:1234", :"client.id"=>"my-ref")
+      expect(::Rdkafka::Config).to receive(:new).with(:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL")
 
       described_class.new(
-        :protocol   => 'Kafka',
-        :host       => 'localhost',
-        :port       => 1234,
-        :client_ref => 'my-ref'
+        :protocol        => 'Kafka',
+        :host            => 'localhost',
+        :port            => 1234,
+        :client_ref      => 'my-ref',
+        :"sasl.protocol" => "SASL_SSL"
       )
     end
 
     it 'creates a client connects to a cluster' do
-      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers"=>"host1:1234,host2:1234", :"client.id"=>"my-ref"})
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "host1:1234,host2:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL"})
 
       described_class.new(
-        :protocol   => 'Kafka',
-        :hosts      => %w(host1 host2),
-        :port       => 1234,
-        :client_ref => 'my-ref'
+        :protocol        => 'Kafka',
+        :hosts           => %w[host1 host2],
+        :port            => 1234,
+        :client_ref      => 'my-ref',
+        :"sasl.protocol" => "SASL_SSL"
       )
     end
   end
