@@ -76,18 +76,23 @@ module ManageIQ
         attr_reader :kafka_client
 
         def initialize(options)
-          hosts = Array(options[:hosts] || options[:host])
-          hosts.collect! { |host| "#{host}:#{options[:port]}" }
-
           @encoding = options[:encoding] || 'yaml'
           require "json" if @encoding == "json"
 
-          connection_opts = {:"bootstrap.servers" => hosts.join(',')}
-          connection_opts[:"client.id"] = options[:client_ref] if options[:client_ref]
-          connection_opts.merge!(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref))
-
           ::Rdkafka::Config.logger = logger
-          @kafka_client = ::Rdkafka::Config.new(connection_opts)
+          @kafka_client = ::Rdkafka::Config.new(rdkafka_connection_opts(options))
+        end
+
+        def rdkafka_connection_opts(options)
+          hosts = Array(options[:hosts] || options[:host])
+          hosts.collect! { |host| "#{host}:#{options[:port]}" }
+
+          result = {:"bootstrap.servers" => hosts.join(',')}
+          result[:"client.id"] = options[:client_ref] if options[:client_ref]
+          result[:"sasl.username"] = options[:username] if options[:username]
+          result[:"sasl.password"] = options[:password] if options[:password]
+
+          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password))
         end
       end
     end
