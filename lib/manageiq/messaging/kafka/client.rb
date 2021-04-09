@@ -84,7 +84,10 @@ module ManageIQ
 
           connection_opts = {:"bootstrap.servers" => hosts.join(',')}
           connection_opts[:"client.id"] = options[:client_ref] if options[:client_ref]
-          connection_opts.merge!(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref))
+          connection_opts[:"sasl.username"] = options[:username] if options[:username]
+          connection_opts[:"sasl.password"] = options[:password] if options[:password]
+
+          connection_opts.merge!(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password))
 
           ::Rdkafka::Config.logger = logger
           @kafka_client = ::Rdkafka::Config.new(connection_opts)

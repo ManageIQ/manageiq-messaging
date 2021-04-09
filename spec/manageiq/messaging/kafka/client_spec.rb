@@ -39,6 +39,19 @@ describe ManageIQ::Messaging::Kafka::Client do
         :"sasl.protocol" => "SASL_SSL"
       )
     end
+
+    it 'converts username/password to sasl parameters' do
+      expect(::Rdkafka::Config).to receive(:new).with(:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password")
+
+      described_class.new(
+        :protocol        => 'Kafka',
+        :host            => 'localhost',
+        :port            => 1234,
+        :username        => "user",
+        :password        => "password",
+        :client_ref      => 'my-ref',
+      )
+    end
   end
 
   describe '#publish_topic' do
