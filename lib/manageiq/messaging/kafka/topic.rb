@@ -12,6 +12,11 @@ module ManageIQ
           raw_publish(true, *topic_for_publish(options))
         end
 
+        def publish_topic_multi_impl(messages)
+          handles = messages.map { |message| raw_publish(false, *topic_for_publish(message)) }
+          handles.each(&:wait)
+        end
+
         def subscribe_topic_impl(options, &block)
           topic = address(options)
 

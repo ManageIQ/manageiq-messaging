@@ -12,6 +12,10 @@ module ManageIQ
           raw_publish(address, options[:payload], headers)
         end
 
+        def publish_topic_multi_impl(messages)
+          messages.each { |message| publish_topic_impl(message) }
+        end
+
         def subscribe_topic_impl(options)
           queue_name, headers = topic_for_subscribe(options)
 
