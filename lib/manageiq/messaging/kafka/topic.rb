@@ -8,12 +8,8 @@ module ManageIQ
 
         private
 
-        def publish_topic_impl(options)
-          raw_publish(true, *topic_for_publish(options))
-        end
-
-        def publish_topic_multi_impl(messages)
-          handles = messages.map { |message| raw_publish(false, *topic_for_publish(message)) }
+        def publish_topic_impl(messages)
+          handles = messages.collect { |message| raw_publish(false, *topic_for_publish(message)) }
           handles.each(&:wait)
         end
 

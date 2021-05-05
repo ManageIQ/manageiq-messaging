@@ -170,24 +170,10 @@ module ManageIQ
       # Other options are underlying messaging system specific.
       #
       def publish_topic(options)
-        assert_options(options, [:event, :service])
+        messages = Array.wrap(options)
+        messages.each { |msg| assert_options(msg, [:event, :service]) }
 
-        publish_topic_impl(options)
-      end
-
-      # Publish multiple messages to a topic.  All subscribers will receive a copy of the message.
-      # Expected keys in +messages* (Array) are:
-      # * :service (service is used to determine the topic address)
-      # * :event   (event name)
-      # * :payload (message body, a string or an user object that can be serialized)
-      # * :sender  (optional, identify the sender)
-      # * :headers (optional, additional headers to add to the message)
-      # Other options are underlying messaging system specific.
-      #
-      def publish_topic_multi(messages)
-        raise ArgumentError, "messages must be an array" unless messages.kind_of?(Array)
-
-        publish_topic_multi_impl(messages)
+        publish_topic_impl(messages)
       end
 
       # Subscribe to receive topic type messages.

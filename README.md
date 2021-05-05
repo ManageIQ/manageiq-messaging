@@ -157,15 +157,15 @@ By default, events are delivered to live subscribers only. Some messaging system
 
 ### Publish bulk messages to a topic
 
-Often it is more efficient to publish messages in bulk rather than one-at-a-time.  To do this you can use the `publish_topic_multi` API:
+Often it is more efficient to publish messages in bulk rather than one-at-a-time.  To do this you can pass an array of messages to the `publish_topic` API:
 
 ```ruby
-  messages = [
-    {:service => 'provider_events', :event => 'powered_off', :payload => {:ems_ref => 'uid987', :timestamp => '1501091391'}},
-    {:service => 'provider_events', :event => 'powered_on', :payload => {:ems_ref => 'uid987', :timestamp => '1501091429'}},
-  ]
-
-  client.publish_topic_multi(messages)
+  client.publish_topic(
+    [
+      {:service => 'provider_events', :event => 'powered_off', :payload => {:ems_ref => 'uid987', :timestamp => '1501091391'}},
+      {:service => 'provider_events', :event => 'powered_on', :payload => {:ems_ref => 'uid987', :timestamp => '1501091429'}},
+    ]
+  )
 ```
 
 ### Add your own headers to a message (Queue or Topic)

@@ -76,16 +76,10 @@ describe ManageIQ::Messaging::Client do
       expect(subject).to receive(:publish_topic_impl)
       subject.publish_topic(:service => 'a', :event => 'e')
     end
-  end
 
-  describe '#publish_topic_multi' do
-    it 'requires argument to be an array' do
-      expect { subject.publish_topic_multi({}) }.to raise_error(ArgumentError)
-    end
-
-    it 'sends a message to a topic' do
-      expect(subject).to receive(:publish_topic_multi_impl)
-      subject.publish_topic_multi([:service => 'a', :event => 'e'])
+    it 'sends an array of messages to a topic' do
+      expect(subject).to receive(:publish_topic_impl).with(kind_of(Array))
+      subject.publish_topic([{:service => 'a', :event => 'e'}, {:service => 'a', :event => 'b'}])
     end
   end
 
