@@ -161,7 +161,8 @@ module ManageIQ
       end
 
       # Publish a message as a topic. All subscribers will receive a copy of the message.
-      # Expected keys in +options+ are:
+      # +messages+ can be either a hash or an array of hashes.
+      # Expected keys are:
       # * :service (service is used to determine the topic address)
       # * :event   (event name)
       # * :payload (message body, a string or an user object that can be serialized)
@@ -169,8 +170,8 @@ module ManageIQ
       # * :headers (optional, additional headers to add to the message)
       # Other options are underlying messaging system specific.
       #
-      def publish_topic(options)
-        messages = Array.wrap(options)
+      def publish_topic(messages)
+        messages = Array.wrap(messages)
         messages.each { |msg| assert_options(msg, [:event, :service]) }
 
         publish_topic_impl(messages)

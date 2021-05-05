@@ -8,11 +8,11 @@ module ManageIQ
 
         def publish_message_impl(options)
           raise ArgumentError, "Kafka messaging implementation does not take a block" if block_given?
-          raw_publish(true, *queue_for_publish(options))
+          raw_publish(*queue_for_publish(options)).wait
         end
 
         def publish_messages_impl(messages)
-          handles = messages.collect { |msg_options| raw_publish(false, *queue_for_publish(msg_options)) }
+          handles = messages.collect { |msg_options| raw_publish(*queue_for_publish(msg_options)) }
           handles.each(&:wait)
         end
 

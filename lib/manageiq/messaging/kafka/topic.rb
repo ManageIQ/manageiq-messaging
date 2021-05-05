@@ -9,7 +9,7 @@ module ManageIQ
         private
 
         def publish_topic_impl(messages)
-          handles = messages.collect { |message| raw_publish(false, *topic_for_publish(message)) }
+          handles = messages.collect { |message| raw_publish(*topic_for_publish(message)) }
           handles.each(&:wait)
         end
 

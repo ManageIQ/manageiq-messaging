@@ -21,12 +21,9 @@ module ManageIQ
           @consumer = kafka_client.consumer
         end
 
-        def raw_publish(wait, body, options)
+        def raw_publish(body, options)
           options[:payload] = encode_body(options[:headers], body)
-          producer.produce(options).tap do |handle|
-            handle.wait if wait
-            logger.info("Published to topic(#{options[:topic]}), msg(#{payload_log(body.inspect)})")
-          end
+          producer.produce(options)
         end
 
         def queue_for_publish(options)
