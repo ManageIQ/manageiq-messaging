@@ -4,12 +4,16 @@ module ManageIQ
       module Topic
         private
 
-        def publish_topic_impl(options)
+        def publish_topic_single(options)
           address, headers = topic_for_publish(options)
           headers[:sender] = options[:sender] if options[:sender]
           headers[:event_type] = options[:event] if options[:event]
 
           raw_publish(address, options[:payload], headers)
+        end
+
+        def publish_topic_impl(messages)
+          messages.each { |message| publish_topic_single(message) }
         end
 
         def subscribe_topic_impl(options)

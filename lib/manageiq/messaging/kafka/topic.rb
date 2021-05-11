@@ -8,8 +8,9 @@ module ManageIQ
 
         private
 
-        def publish_topic_impl(options)
-          raw_publish(true, *topic_for_publish(options))
+        def publish_topic_impl(messages)
+          handles = messages.collect { |message| raw_publish(*topic_for_publish(message)) }
+          handles.each(&:wait)
         end
 
         def subscribe_topic_impl(options, &block)

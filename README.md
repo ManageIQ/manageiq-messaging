@@ -155,6 +155,19 @@ This is the one-to-many publish/subscribe pattern. Multiple subscribers can subs
 
 By default, events are delivered to live subscribers only. Some messaging systems support persistence with options.
 
+### Publish bulk messages to a topic
+
+Often it is more efficient to publish messages in bulk rather than one-at-a-time.  To do this you can pass an array of messages to the `publish_topic` API:
+
+```ruby
+  client.publish_topic(
+    [
+      {:service => 'provider_events', :event => 'powered_off', :payload => {:ems_ref => 'uid987', :timestamp => '1501091391'}},
+      {:service => 'provider_events', :event => 'powered_on', :payload => {:ems_ref => 'uid987', :timestamp => '1501091429'}},
+    ]
+  )
+```
+
 ### Add your own headers to a message (Queue or Topic)
 
 If you want you can add in your own headers to the send message

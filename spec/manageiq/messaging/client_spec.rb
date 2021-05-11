@@ -76,6 +76,13 @@ describe ManageIQ::Messaging::Client do
       expect(subject).to receive(:publish_topic_impl)
       subject.publish_topic(:service => 'a', :event => 'e')
     end
+
+    it 'sends an array of messages to a topic' do
+      expect(subject)
+        .to receive(:publish_topic_impl)
+        .with(array_including(hash_including(:event => 'e'), hash_including(:event => 'b')))
+      subject.publish_topic([{:service => 'a', :event => 'e'}, {:service => 'a', :event => 'b'}])
+    end
   end
 
   describe '#subscribe_topic' do
