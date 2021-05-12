@@ -28,3 +28,6 @@
 
 = 1.0.2 - 4-Jan-2021
 * Rails 6.0 Support
+
+= 1.0.3 - 12-May-2021
+* Allow bulk publish of messages to a topic
