@@ -17,3 +17,6 @@
 
 = 0.1.6 - 6-July-2020
 * Rescue message body decoding errors. Re-raise errors raised by users code of processing received messages. 
+
+= 0.1.7 - 14-May-2021
+* Loosen activesupport dependency to ~> 5.2
