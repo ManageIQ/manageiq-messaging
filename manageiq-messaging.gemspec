@@ -21,10 +21,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'activesupport', '>= 5.2.4.3', "< 6.1"
+  spec.add_dependency 'activesupport', '>= 5.2.4.3', "< 7.0"
   spec.add_dependency 'rdkafka', '~> 0.8'
   spec.add_dependency 'stomp', '~> 1.4.4'
 
+  spec.add_development_dependency "appraisal"
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "codeclimate-test-reporter", "~> 1.0.0"
   spec.add_development_dependency "manageiq-style"
