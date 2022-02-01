@@ -18,3 +18,7 @@ module ManageIQ::Messaging::Test
     def subscribe_background_job_impl(args); end
   end
 end
+
+require "active_support"
+puts
+puts "\e[93mUsing ActiveSupport #{ActiveSupport.version}\e[0m"

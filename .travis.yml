@@ -5,6 +5,7 @@ rvm:
 before_install: gem install bundler -v 1.13.0
 after_script: bundle exec codeclimate-test-reporter
 cache: bundler
-gemfile:
-  - gemfiles/activesupport_6.0.gemfile
-  - gemfiles/activesupport_6.1.gemfile
+env:
+  matrix:
+    - TEST_RAILS_VERSION=6.1
+    - TEST_RAILS_VERSION=6.0
