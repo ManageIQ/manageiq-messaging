@@ -4,7 +4,6 @@
 [![Build Status](https://travis-ci.com/ManageIQ/manageiq-messaging.svg)](https://travis-ci.com/ManageIQ/manageiq-messaging)
 [![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-messaging.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-messaging/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging/coverage)
-[![Security](https://hakiri.io/github/ManageIQ/manageiq-messaging/master.svg)](https://hakiri.io/github/ManageIQ/manageiq-messaging/master)
 
 Client library for ManageIQ components to exchange messages through its internal message bus.
 
