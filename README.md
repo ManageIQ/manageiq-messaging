@@ -1,7 +1,7 @@
 # ManageIQ Messaging Client
 
 [![Gem Version](https://badge.fury.io/rb/manageiq-messaging.svg)](http://badge.fury.io/rb/manageiq-messaging)
-[![Build Status](https://travis-ci.com/ManageIQ/manageiq-messaging.svg)](https://travis-ci.com/ManageIQ/manageiq-messaging)
+[![CI](https://github.com/ManageIQ/manageiq-messaging/actions/workflows/ci.yaml/badge.svg)](https://github.com/ManageIQ/manageiq-messaging/actions/workflows/ci.yaml)
 [![Code Climate](https://codeclimate.com/github/ManageIQ/manageiq-messaging.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging)
 [![Test Coverage](https://codeclimate.com/github/ManageIQ/manageiq-messaging/badges/coverage.svg)](https://codeclimate.com/github/ManageIQ/manageiq-messaging/coverage)
 
