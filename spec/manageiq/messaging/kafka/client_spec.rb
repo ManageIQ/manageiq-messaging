@@ -17,7 +17,7 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#initialize' do
     it 'creates a client connects to a single host' do
-      expect(::Rdkafka::Config).to receive(:new).with(:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL")
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL"})
 
       described_class.new(
         :protocol        => 'Kafka',
@@ -41,7 +41,7 @@ describe ManageIQ::Messaging::Kafka::Client do
     end
 
     it 'converts username/password to sasl parameters' do
-      expect(::Rdkafka::Config).to receive(:new).with(:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password")
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password"})
 
       described_class.new(
         :protocol        => 'Kafka',
