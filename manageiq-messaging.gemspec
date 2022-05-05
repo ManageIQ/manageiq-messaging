@@ -11,12 +11,17 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
   spec.description   = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
-  spec.homepage      = 'http://github.com/ManageIQ/manageiq-messaging'
+  spec.homepage      = 'https://github.com/ManageIQ/manageiq-messaging'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
+  spec.metadata    = {
+    "changelog_uri" => "https://github.com/ManageIQ/manageiq-messaging/blob/master/CHANGELOG.md",
+    "source_code_uri" => "https://github.com/ManageIQ/manageiq-messaging/",
+    "bug_tracker_uri" => "https://github.com/ManageIQ/manageiq-messaging/issues"
+  }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
