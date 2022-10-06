@@ -23,7 +23,7 @@ module ManageIQ
 
         def raw_publish(body, options)
           options[:payload] = encode_body(options[:headers], body)
-          producer.produce(options)
+          producer.produce(**options)
         end
 
         def queue_for_publish(options)
