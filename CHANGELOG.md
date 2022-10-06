@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.2] - 6-Oct-2022
+
+* Fix kafka publish_topic on ruby3 [#74](https://github.com/ManageIQ/manageiq-messaging/pull/74)
+
 ## [1.1.1] - 6-May-2022
 
 * Ruby 3.0 support [#71](https://github.com/ManageIQ/manageiq-messaging/pull/71)
