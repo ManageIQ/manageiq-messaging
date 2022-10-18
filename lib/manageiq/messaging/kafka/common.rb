@@ -94,6 +94,22 @@ module ManageIQ
           end
         end
 
+        def wait_for_topic(wait = true)
+          retry_count     = 0
+          maximum_backoff = 300
+
+          begin
+            yield
+          rescue Rdkafka::RdkafkaError => err
+            raise if err.code != :unknown_topic_or_part || !wait
+
+            retry_count += 1
+            sleep([1.5 * retry_count, maximum_backoff].min)
+
+            retry
+          end
+        end
+
         def message_header_keys
           [:sender, :message_type, :class_name]
         end

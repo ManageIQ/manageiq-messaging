@@ -17,13 +17,18 @@ module ManageIQ
         end
 
         def subscribe_messages_impl(options, &block)
+          wait = options.delete(:wait_for_topic)
+          wait = true if wait.nil?
+
           topic = address(options)
           options[:persist_ref] = GROUP_FOR_QUEUE_MESSAGES + topic
 
-          queue_consumer = consumer(true, options)
-          queue_consumer.subscribe(topic)
-          queue_consumer.each do |message|
-            process_queue_message(queue_consumer, topic, message, &block)
+          wait_for_topic(wait) do
+            queue_consumer = consumer(true, options)
+            queue_consumer.subscribe(topic)
+            queue_consumer.each do |message|
+              process_queue_message(queue_consumer, topic, message, &block)
+            end
           end
         end
       end
