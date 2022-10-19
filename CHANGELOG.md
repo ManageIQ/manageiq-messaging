@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* Add wait_for_topic option to Kafka (#75)
+* Add ssl and ca_file options to `Client.open` [#76](https://github.com/ManageIQ/manageiq-messaging/pull/76)
+* Add wait_for_topic option to Kafka [#75](https://github.com/ManageIQ/manageiq-messaging/pull/75)
 
 ## [1.1.2] - 6-Oct-2022
 

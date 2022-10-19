@@ -38,7 +38,7 @@ module ManageIQ
       # * :username (optional)
       # * :password (optional)
       # * :ssl (true/false)
-      # * ca_file (optional. path to a certificate authority cert)
+      # * :ca_file (optional. path to a certificate authority cert)
       # * :encoding ('yaml' or 'json'. Default 'yaml')
       # Other connection options are underlying messaging system specific.
       #
