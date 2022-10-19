@@ -33,6 +33,12 @@ module ManageIQ
       # Open or create a connection to the message broker.
       # Expected +options+ keys are:
       # * :protocol (Implemented: 'Stomp', 'Kafka'. Default 'Stomp')
+      # * :host (hostname or IP address of the messaging broker)
+      # * :port (host port number)
+      # * :username (optional)
+      # * :password (optional)
+      # * :ssl (true/false)
+      # * :ca_file (optional. path to a certificate authority cert)
       # * :encoding ('yaml' or 'json'. Default 'yaml')
       # Other connection options are underlying messaging system specific.
       #

@@ -17,39 +17,67 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#initialize' do
     it 'creates a client connects to a single host' do
-      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL"})
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.mechanism"=>"PLAIN", :"security.protocol" => "PLAINTEXT"})
 
       described_class.new(
-        :protocol        => 'Kafka',
-        :host            => 'localhost',
-        :port            => 1234,
-        :client_ref      => 'my-ref',
-        :"sasl.protocol" => "SASL_SSL"
+        :protocol   => 'Kafka',
+        :host       => 'localhost',
+        :port       => 1234,
+        :client_ref => 'my-ref'
       )
     end
 
     it 'creates a client connects to a cluster' do
-      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "host1:1234,host2:1234", :"client.id" => "my-ref", :"sasl.protocol" => "SASL_SSL"})
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "host1:1234,host2:1234", :"client.id" => "my-ref", :"sasl.mechanism"=>"PLAIN", :"security.protocol" => "PLAINTEXT"})
 
       described_class.new(
-        :protocol        => 'Kafka',
-        :hosts           => %w[host1 host2],
-        :port            => 1234,
-        :client_ref      => 'my-ref',
-        :"sasl.protocol" => "SASL_SSL"
+        :protocol   => 'Kafka',
+        :hosts      => %w[host1 host2],
+        :port       => 1234,
+        :client_ref => 'my-ref'
       )
     end
 
     it 'converts username/password to sasl parameters' do
-      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password"})
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password", :"sasl.mechanism"=>"PLAIN", :"security.protocol" => "PLAINTEXT"})
 
       described_class.new(
-        :protocol        => 'Kafka',
-        :host            => 'localhost',
-        :port            => 1234,
-        :username        => "user",
-        :password        => "password",
-        :client_ref      => 'my-ref',
+        :protocol   => 'Kafka',
+        :host       => 'localhost',
+        :port       => 1234,
+        :username   => 'user',
+        :password   => 'password',
+        :client_ref => 'my-ref',
+      )
+    end
+
+    it 'converts ssl => true to security.protocol SASL_SSL' do
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password", :"sasl.mechanism"=>"PLAIN", :"security.protocol" => "SASL_SSL", :"ssl.ca.location" => "/path/to/cert"})
+
+      described_class.new(
+        :protocol   => 'Kafka',
+        :host       => 'localhost',
+        :port       => 1234,
+        :username   => "user",
+        :password   => 'password',
+        :client_ref => 'my-ref',
+        :ssl        => true,
+        :ca_file    => '/path/to/cert'
+      )
+    end
+
+    it 'allows passing sasl parameters directly' do
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.username" => "user", :"sasl.password" => "password", :"sasl.mechanism"=>"PLAIN", :"security.protocol" => "SASL_SSL", :"ssl.ca.location" => "/path/to/cert"})
+
+      described_class.new(
+        :protocol            => 'Kafka',
+        :host                => 'localhost',
+        :port                => 1234,
+        :client_ref          => 'my-ref',
+        :"sasl.username"     => 'user',
+        :"sasl.password"     => 'password',
+        :"security.protocol" => 'SASL_SSL',
+        :"ssl.ca.location"   => '/path/to/cert'
       )
     end
   end
@@ -165,7 +193,7 @@ describe ManageIQ::Messaging::Kafka::Client do
 
   describe '#subscribe_messages' do
     let(:auto_ack) { false }
- 
+
     before do
       allow(consumer).to receive(:subscribe)
       allow(consumer).to receive(:each)

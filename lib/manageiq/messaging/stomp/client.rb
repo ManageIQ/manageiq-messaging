@@ -61,7 +61,7 @@ module ManageIQ
         attr_reader :stomp_client
 
         def initialize(options)
-          host = options.slice(:host, :port)
+          host = options.slice(:host, :port, :ssl)
           host[:passcode] = options[:password] if options[:password]
           host[:login] = options[:username] if options[:username]
 

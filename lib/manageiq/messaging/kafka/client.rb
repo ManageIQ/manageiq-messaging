@@ -8,13 +8,11 @@ module ManageIQ
       # Kafka specific connection options accepted by +open+ method:
       # * :client_ref (A reference string to identify the client)
       # * :hosts (Array of Kafka cluster hosts, or)
-      # * :host (Single host name)
-      # * :port (host port number)
       #
-      # For additional security options, please refer to 
+      # For additional security options, please refer to
       # https://github.com/edenhill/librdkafka/wiki/Using-SSL-with-librdkafka and
-      # https://github.com/edenhill/librdkafka/wiki/Using-SASL-with-librdkafka 
-      # 
+      # https://github.com/edenhill/librdkafka/wiki/Using-SASL-with-librdkafka
+      #
       #
       # Kafka specific +publish_message+ options:
       # * :group_name (Used as Kafka partition_key)
@@ -89,10 +87,14 @@ module ManageIQ
 
           result = {:"bootstrap.servers" => hosts.join(',')}
           result[:"client.id"] = options[:client_ref] if options[:client_ref]
-          result[:"sasl.username"] = options[:username] if options[:username]
-          result[:"sasl.password"] = options[:password] if options[:password]
 
-          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password))
+          result[:"sasl.mechanism"]    = "PLAIN"
+          result[:"sasl.username"]     = options[:username] if options[:username]
+          result[:"sasl.password"]     = options[:password] if options[:password]
+          result[:"ssl.ca.location"]   = options[:ca_file] if options[:ca_file]
+          result[:"security.protocol"] = !!options[:ssl] ? "SASL_SSL" : "PLAINTEXT"
+
+          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password, :ssl, :ca_file))
         end
       end
     end
