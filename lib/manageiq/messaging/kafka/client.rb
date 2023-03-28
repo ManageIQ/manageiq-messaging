@@ -91,10 +91,12 @@ module ManageIQ
           result[:"sasl.mechanism"]    = "PLAIN"
           result[:"sasl.username"]     = options[:username] if options[:username]
           result[:"sasl.password"]     = options[:password] if options[:password]
-          result[:"ssl.ca.location"]   = options[:ca_file] if options[:ca_file]
           result[:"security.protocol"] = !!options[:ssl] ? "SASL_SSL" : "PLAINTEXT"
+          result[:"ssl.ca.location"]   = options[:ca_file] if options[:ca_file]
+          result[:"ssl.keystore.location"] = options[:keystore_location] if options[:keystore_location]
+          result[:"ssl.keystore.password"] = options[:keystore_password] if options[:keystore_password]
 
-          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password, :ssl, :ca_file))
+          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password, :ssl, :ca_file, :keystore_location, :keystore_password))
         end
       end
     end
