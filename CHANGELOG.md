@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.0] - 03-Apr-2023
+* Add Kafka SSL keystore options to client [#77](https://github.com/ManageIQ/manageiq-messaging/pull/77)
+
 ## [1.2.0] - 19-Oct-2022
 
 * Add ssl and ca_file options to `Client.open` [#76](https://github.com/ManageIQ/manageiq-messaging/pull/76)
@@ -73,7 +76,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Initial release
 
-[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.1.2...v1.2.0
+[1.1.2]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.0.2...v1.0.3
