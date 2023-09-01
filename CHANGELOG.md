@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.0] - 01-Sept-2023
+* Add Kafka SASL mechanism options to client ([#80](https://github.com/ManageIQ/manageiq-messaging/pull/80))
+
 ## [1.3.0] - 03-Apr-2023
 * Add Kafka SSL keystore options to client [#77](https://github.com/ManageIQ/manageiq-messaging/pull/77)
 
