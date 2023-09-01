@@ -88,7 +88,7 @@ module ManageIQ
           result = {:"bootstrap.servers" => hosts.join(',')}
           result[:"client.id"] = options[:client_ref] if options[:client_ref]
 
-          result[:"sasl.mechanism"]    = "PLAIN"
+          result[:"sasl.mechanism"]    = options[:sasl_mechanism] || "PLAIN"
           result[:"sasl.username"]     = options[:username] if options[:username]
           result[:"sasl.password"]     = options[:password] if options[:password]
           result[:"security.protocol"] = !!options[:ssl] ? "SASL_SSL" : "PLAINTEXT"
@@ -96,7 +96,7 @@ module ManageIQ
           result[:"ssl.keystore.location"] = options[:keystore_location] if options[:keystore_location]
           result[:"ssl.keystore.password"] = options[:keystore_password] if options[:keystore_password]
 
-          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :username, :password, :ssl, :ca_file, :keystore_location, :keystore_password))
+          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :sasl_mechanism, :username, :password, :ssl, :ca_file, :keystore_location, :keystore_password))
         end
       end
     end
