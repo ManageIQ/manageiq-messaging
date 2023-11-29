@@ -3,6 +3,7 @@ module ManageIQ
     module Kafka
       module Common
         require 'manageiq/messaging/common'
+        require "active_support/core_ext/hash/indifferent_access"
         include ManageIQ::Messaging::Common
 
         private
@@ -116,7 +117,7 @@ module ManageIQ
 
         def parse_message_headers(headers)
           return [nil, nil, nil] unless headers.kind_of?(Hash)
-          headers.values_at(*message_header_keys)
+          headers.with_indifferent_access.values_at(*message_header_keys)
         end
 
         def event_header_keys
@@ -125,7 +126,7 @@ module ManageIQ
 
         def parse_event_headers(headers)
           return [nil, nil] unless headers.kind_of?(Hash)
-          headers.values_at(*event_header_keys)
+          headers.with_indifferent_access.values_at(*event_header_keys)
         end
       end
     end
