@@ -65,8 +65,7 @@ module ManageIQ
 
         # list all topics
         def topics
-          native_kafka = producer.instance_variable_get(:@native_kafka)
-          Rdkafka::Metadata.new(native_kafka).topics.collect { |topic| topic[:topic_name] }
+          kafka_client.admin.metadata.topics.map { |topic| topic[:topic_name] }
         end
 
         private
