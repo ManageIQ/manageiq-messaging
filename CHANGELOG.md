@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.4.3] - 03-May-2024
+* Close the Kafka admin connection ([#89](https://github.com/ManageIQ/manageiq-messaging/pull/89))
+
 ## [1.4.2] - 03-May-2024
 * Fix Kafka List Topics Method ([#88](https://github.com/ManageIQ/manageiq-messaging/pull/88))
 * Add ruby 3.1 to the test matrix ([#84](https://github.com/ManageIQ/manageiq-messaging/pull/84))
@@ -87,7 +90,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Initial release
 
-[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.3.0...v1.4.0
