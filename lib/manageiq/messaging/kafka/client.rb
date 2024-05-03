@@ -56,6 +56,9 @@ module ManageIQ
         end
 
         def close
+          @admin&.close
+          @admin = nil
+
           @producer&.close
           @producer = nil
 
@@ -65,7 +68,7 @@ module ManageIQ
 
         # list all topics
         def topics
-          kafka_client.admin.metadata.topics.map { |topic| topic[:topic_name] }
+          admin.metadata.topics.map { |topic| topic[:topic_name] }
         end
 
         private
