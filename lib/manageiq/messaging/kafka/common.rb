@@ -8,6 +8,10 @@ module ManageIQ
 
         private
 
+        def admin
+          @admin ||= kafka_client.admin
+        end
+
         def producer
           @producer ||= kafka_client.producer
         end
