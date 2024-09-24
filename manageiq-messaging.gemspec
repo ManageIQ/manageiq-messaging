@@ -6,7 +6,7 @@ require 'manageiq/messaging/version'
 Gem::Specification.new do |spec|
   spec.name                  = "manageiq-messaging"
   spec.version               = ManageIQ::Messaging::VERSION
-  spec.required_ruby_version = '>= 3.1'
+  spec.required_ruby_version = '>= 3.0'
   spec.authors               = ["ManageIQ Authors"]
 
   spec.summary       = 'Client library for ManageIQ components to exchange messages through its internal message bus.'
