@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.5.0] - 30-Sep-2024
+* Use ruby 3.1 and rails 7 for code coverage ([#92](https://github.com/ManageIQ/manageiq-messaging/pull/92))
+* Drop end of life rubies and rails and add new versions ([#94](https://github.com/ManageIQ/manageiq-messaging/pull/94))
+
 ## [1.4.3] - 03-May-2024
 * Close the Kafka admin connection ([#89](https://github.com/ManageIQ/manageiq-messaging/pull/89))
 
