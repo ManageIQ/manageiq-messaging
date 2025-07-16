@@ -4,8 +4,16 @@ describe ManageIQ::Messaging::Client do
   subject { described_class.open({:protocol => 'Test'}) }
 
   describe '.open' do
+    it 'without a protocol raises an exception' do
+      expect { described_class.open({}) }.to raise_error(ArgumentError, /Missing protocol/)
+    end
+
     it 'creates an instance of a type specific client' do
       expect(subject).to be_kind_of(ManageIQ::Messaging::Test::Client)
+    end
+
+    it 'with an invalid protocol' do
+      expect { described_class.open(:protocol => 'Invalid') }.to raise_error(ArgumentError, /Invalid protocol/)
     end
 
     it 'closes the client before exit if it opens with a block' do

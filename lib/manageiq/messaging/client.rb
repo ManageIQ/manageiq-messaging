@@ -32,7 +32,7 @@ module ManageIQ
     class Client
       # Open or create a connection to the message broker.
       # Expected +options+ keys are:
-      # * :protocol (Implemented: 'Stomp', 'Kafka'. Default 'Stomp')
+      # * :protocol (Implemented: 'Stomp', 'Kafka')
       # * :host (hostname or IP address of the messaging broker)
       # * :port (host port number)
       # * :username (optional)
@@ -44,8 +44,14 @@ module ManageIQ
       #
       # Returns a +Client+ instance if no block is given.
       def self.open(options)
-        protocol = options[:protocol] || :Stomp
-        client = Object.const_get("ManageIQ::Messaging::#{protocol}::Client").new(options)
+        protocol = options[:protocol]
+        raise ArgumentError, "Missing protocol" if protocol.nil?
+
+        client = begin
+                   Object.const_get("ManageIQ::Messaging::#{protocol}::Client").new(options)
+                 rescue NameError
+                   raise ArgumentError, "Invalid protocol: #{protocol}"
+                 end
 
         return client unless block_given?
 
