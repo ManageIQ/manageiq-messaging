@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0] - 17-Jul-2025
+* BREAKING Don't default to Stomp protocol ([#97](https://github.com/ManageIQ/manageiq-messaging/pull/97))
+
 ## [1.5.0] - 30-Sep-2024
 * Use ruby 3.1 and rails 7 for code coverage ([#92](https://github.com/ManageIQ/manageiq-messaging/pull/92))
 * Drop end of life rubies and rails and add new versions ([#94](https://github.com/ManageIQ/manageiq-messaging/pull/94))
@@ -94,7 +97,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Initial release
 
-[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.3...HEAD
+[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.5.0...v2.0.0
+[1.5.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.3...v1.5.0
 [1.4.3]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.0...v1.4.1
