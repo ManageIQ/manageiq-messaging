@@ -27,9 +27,14 @@ jobs:
         - '7.0'
         - '7.1'
         - '7.2'
+        - '8.0'
         exclude:
         - ruby-version: '3.0'
           rails-version: '7.2'
+        - ruby-version: '3.0'
+          rails-version: '8.0'
+        - ruby-version: '3.1'
+          rails-version: '8.0'
     env:
       TEST_RAILS_VERSION: "${{ matrix.rails-version }}"
     steps:
