@@ -38,6 +38,8 @@ jobs:
           rails-version: '8.0'
         - ruby-version: '3.0'
           rails-version: '8.1'
+        - ruby-version: '3.1'
+          rails-version: '8.1'
     env:
       TEST_RAILS_VERSION: "${{ matrix.rails-version }}"
     steps:
