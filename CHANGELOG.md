@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.2.0] - 19-Aug-2026
+* Support rails 8.1 ([#128](https://github.com/ManageIQ/manageiq-messaging/pull/128))
+
 ## [2.1.0] - 20-Jan-2026
 * Support rails 8.0 ([#102](https://github.com/ManageIQ/manageiq-messaging/pull/102))
 
@@ -100,7 +103,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Initial release
 
-[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/ManageIQ/manageiq-messaging/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.5.0...v2.0.0
 [1.5.0]: https://github.com/ManageIQ/manageiq-messaging/compare/v1.4.3...v1.5.0
