@@ -80,6 +80,32 @@ describe ManageIQ::Messaging::Kafka::Client do
         :"ssl.ca.location"   => '/path/to/cert'
       )
     end
+
+    it 'allows passing security_protocol and sasl_mechanism options' do
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.mechanism" => "SCRAM-SHA-512", :"security.protocol" => "SASL_PLAINTEXT"})
+
+      described_class.new(
+        :protocol          => 'Kafka',
+        :host              => 'localhost',
+        :port              => 1234,
+        :client_ref        => 'my-ref',
+        :sasl_mechanism    => 'SCRAM-SHA-512',
+        :security_protocol => 'SASL_PLAINTEXT'
+      )
+    end
+
+    it 'allows passing arbitrary rdkafka options' do
+      expect(::Rdkafka::Config).to receive(:new).with({:"bootstrap.servers" => "localhost:1234", :"client.id" => "my-ref", :"sasl.mechanism" => "PLAIN", :"security.protocol" => "PLAINTEXT", :"ssl.ca.pem" => "CERT_DATA", :"enable.idempotence" => true})
+
+      described_class.new(
+        :protocol             => 'Kafka',
+        :host                 => 'localhost',
+        :port                 => 1234,
+        :client_ref           => 'my-ref',
+        :"ssl.ca.pem"         => "CERT_DATA",
+        :"enable.idempotence" => true
+      )
+    end
   end
 
   describe '#publish_topic' do

@@ -84,21 +84,38 @@ module ManageIQ
         end
 
         def rdkafka_connection_opts(options)
+          rdkafka_options = options.except(
+            :ca_file,
+            :client_ref,
+            :encoding,
+            :host,
+            :hosts,
+            :keystore_location,
+            :keystore_password,
+            :password,
+            :port,
+            :protocol,
+            :sasl_mechanism,
+            :security_protocol,
+            :ssl,
+            :username
+          )
+
           hosts = Array(options[:hosts] || options[:host])
-          hosts.collect! { |host| "#{host}:#{options[:port]}" }
+          hosts = hosts.map { |host| options[:port] ? "#{host}:#{options[:port]}" : host.to_s }
 
-          result = {:"bootstrap.servers" => hosts.join(',')}
-          result[:"client.id"] = options[:client_ref] if options[:client_ref]
-
-          result[:"sasl.mechanism"]    = options[:sasl_mechanism] || "PLAIN"
-          result[:"sasl.username"]     = options[:username] if options[:username]
-          result[:"sasl.password"]     = options[:password] if options[:password]
-          result[:"security.protocol"] = !!options[:ssl] ? "SASL_SSL" : "PLAINTEXT"
-          result[:"ssl.ca.location"]   = options[:ca_file] if options[:ca_file]
+          result = {}
+          result[:"bootstrap.servers"]     = hosts.join(',') if hosts.any?
+          result[:"client.id"]             = options[:client_ref]        if options[:client_ref]
+          result[:"sasl.mechanism"]        = options[:sasl_mechanism]    || "PLAIN"
+          result[:"security.protocol"]     = options[:security_protocol] || (options[:ssl] ? "SASL_SSL" : "PLAINTEXT")
+          result[:"sasl.username"]         = options[:username]          if options[:username]
+          result[:"sasl.password"]         = options[:password]          if options[:password]
+          result[:"ssl.ca.location"]       = options[:ca_file]           if options[:ca_file]
           result[:"ssl.keystore.location"] = options[:keystore_location] if options[:keystore_location]
           result[:"ssl.keystore.password"] = options[:keystore_password] if options[:keystore_password]
 
-          result.merge(options.except(:port, :host, :hosts, :encoding, :protocol, :client_ref, :sasl_mechanism, :username, :password, :ssl, :ca_file, :keystore_location, :keystore_password))
+          result.merge(rdkafka_options)
         end
       end
     end
